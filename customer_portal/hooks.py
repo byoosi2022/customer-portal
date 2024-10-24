@@ -23,6 +23,10 @@ app_license = "MIT"
 # webform_include_js = {"doctype": "public/js/doctype.js"}
 # webform_include_css = {"doctype": "public/css/doctype.css"}
 
+website_route_rules = [
+    {"from_route": "/customer-portal", "to_route": "customer_portal"}
+]
+
 # include js in page
 # page_js = {"page" : "public/js/file.js"}
 

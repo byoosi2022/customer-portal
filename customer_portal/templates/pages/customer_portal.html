@@ -1,0 +1,25 @@
+<!-- customer_portal.html -->
+{% extends "templates/web.html" %}
+
+{% block title %}
+Customer Portal
+{% endblock %}
+
+{% block page_content %}
+<div class="customer-portal">
+    <h1>Welcome, {{ frappe.session.user }}</h1>
+    <p>This is your customized customer portal.</p>
+
+    <!-- Example: Display Customer Sales Orders -->
+    <div>
+        <h3>Your Sales Orders</h3>
+        <ul>
+            {% for sales_order in sales_orders %}
+                <li>
+                    <a href="/sales-order/{{ sales_order.name }}">{{ sales_order.name }}</a> - {{ sales_order.status }}
+                </li>
+            {% endfor %}
+        </ul>
+    </div>
+</div>
+{% endblock %}
