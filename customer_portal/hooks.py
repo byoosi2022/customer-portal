@@ -27,6 +27,7 @@ website_route_rules = [
     {"from_route": "/customer-portal", "to_route": "customer_portal"}
 ]
 
+
 # include js in page
 # page_js = {"page" : "public/js/file.js"}
 

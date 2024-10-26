@@ -1,0 +1,233 @@
+<!-- <link href="//maxcdn.bootstrapcdn.com/bootstrap/4.1.1/css/bootstrap.min.css" rel="stylesheet" id="bootstrap-css"> -->
+<!-- <script src="//maxcdn.bootstrapcdn.com/bootstrap/4.1.1/js/bootstrap.min.js"></script> -->
+<!-- <script src="//cdnjs.cloudflare.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script> -->
+<!------ Include the above in your HEAD tag ---------->
+  <!-- Slick css -->
+  <link href="assets/customer_portal/customer_assets/css/styles.css" rel="stylesheet">
+
+<div id="app">
+
+    <div class="container">
+        <h1>Real Estate Listings</h1>
+        <div class="thumb-grid" id="item-list">
+            <!-- Items will be dynamically loaded here -->
+        </div>
+    </div>
+
+    <script>
+        // Fetch items with 'REAL ESTATE' item group from Frappe
+        async function fetchRealEstateItems() {
+            try {
+                const response = await fetch('/api/method/customer_portal.custom_api.item_estates.get_real_estate_items');
+                const data = await response.json();
+
+                if (data.message) {
+                    displayItems(data.message);
+                }
+            } catch (error) {
+                console.error('Error fetching items:', error);
+            }
+        }
+
+        // Display items in thumbnail style
+        function displayItems(items) {
+            const itemList = document.getElementById('item-list');
+            itemList.innerHTML = '';
+
+            items.forEach(item => {
+                const itemHTML = `
+                    <div class="thumb-item">
+                        <img src="${item.image || 'https://via.placeholder.com/200x150'}" alt="${item.item_name}">
+                        <h3>${item.item_name}</h3>
+                        <p>${item.description || 'No description available.'}</p>
+                        <p class="price">₦ ${item.price || 'N/A'}</p>
+                        <button onclick="orderItem('${item.item_code}')">Order Now</button>
+                    </div>
+                `;
+                itemList.innerHTML += itemHTML;
+            });
+        }
+
+        // Order an item by clicking the 'Order Now' button
+        // Fetch the customer details for the logged-in user
+        async function fetchCustomerDetails() {
+            try {
+                const response = await fetch('/api/method/customer_portal.custom_api.create_order.get_customer_for_logged_in_user');
+                const data = await response.json();
+
+                // Check if customer data exists within the response
+                if (data.message && data.message.customer) {
+                    const customer = data.message.customer;
+                    console.log('Customer linked to the user:', customer);
+                    return customer;
+                } else {
+                    alert('No customer linked to this user.');
+                    return null;  // Return null if no customer is linked
+                }
+            } catch (error) {
+                console.error('Error fetching customer details:', error);
+                return null;  // Return null in case of an error
+            }
+        }
+
+     // Fetch API keys
+async function fetchAuthKeys() {
+    try {
+        const response = await fetch('https://portal.metrogroupng.com/api/method/customer_portal.custom_api.auth.get_keys');
+        const data = await response.json();
+        if (data.message) {
+            return {
+                apiKey: data.message.api_key,
+                apiSecret: data.message.api_secret
+            };
+        } else {
+            throw new Error('Failed to fetch API keys.');
+        }
+    } catch (error) {
+        console.error('Error fetching API keys:', error);
+        return null;
+    }
+}
+
+// Order an item by clicking the 'Order Now' button
+async function orderItem(itemCode) {
+    const customer = await fetchCustomerDetails(); // Fetch customer details
+
+    if (!customer) {
+        alert('You are not linked to any customer.');
+        return;
+    }
+
+    // Fetch API keys
+    const authKeys = await fetchAuthKeys();
+    if (!authKeys) {
+        alert('Authentication failed. Please try again later.');
+        return;
+    }
+
+    // Now proceed with placing the order
+    try {
+        const response = await fetch('/api/method/customer_portal.custom_api.create_order.order_real_estate_item', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+                'Authorization': 'Token ' + authKeys.apiKey + ':' + authKeys.apiSecret // Include API key and secret for authentication
+            },
+            body: JSON.stringify({
+                item_code: itemCode,
+                customer: customer
+            })
+        });
+
+        const data = await response.json();
+
+        if (response.ok) {
+            if (data.message) {
+                alert(data.message.message); // Show success message
+                console.log("Sales Order ID:", data.message.sales_order); // Log the Sales Order ID
+            } else {
+                alert('Error while ordering. Please try again.');
+            }
+        } else {
+            if (data._server_messages) {
+                const errorMessages = JSON.parse(data._server_messages).join('\n');
+                alert('Error from server:\n' + errorMessages);
+            } else {
+                alert('Unknown error occurred.');
+            }
+        }
+    } catch (error) {
+        console.error('Error placing order:', error);
+        alert('Error placing the order. Please try again later.');
+    }
+}
+
+let authHeader = null; // Store the authorization header
+
+// Function to fetch API keys and generate the authorization header
+async function getAuthHeader() {
+    if (!authHeader) {
+        try {
+            const response = await fetch('https://portal.metrogroupng.com/api/method/customer_portal.custom_api.auth.get_keys');
+            const data = await response.json();
+            if (data.message) {
+                const apiKey = data.message.api_key;
+                const apiSecret = data.message.api_secret;
+                authHeader = 'Token ' + apiKey + ':' + apiSecret;
+                console.log(authHeader)
+            } else {
+                throw new Error('Failed to fetch API keys.');
+            }
+        } catch (error) {
+            console.error('Error fetching API keys:', error);
+            return null;
+        }
+    }
+    return authHeader;
+}
+
+// Order an item by clicking the 'Order Now' button
+async function orderItem(itemCode) {
+    const customer = await fetchCustomerDetails(); // Fetch customer details
+
+    if (!customer) {
+        alert('You are not linked to any customer.');
+        return;
+    }
+
+    // Get the authorization header
+    const authorizationHeader = await getAuthHeader();
+    if (!authorizationHeader) {
+        alert('Authentication failed. Please try again later.');
+        return;
+    }
+
+    // Now proceed with placing the order
+    try {
+        const response = await fetch('/api/method/customer_portal.custom_api.create_order.order_real_estate_item', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+                'Authorization': authorizationHeader // Include the reusable Authorization header
+            },
+            body: JSON.stringify({
+                item_code: itemCode,
+                customer: customer
+            })
+        });
+
+        const data = await response.json();
+
+        if (response.ok) {
+            if (data.message) {
+                alert(data.message.message); // Show success message
+                console.log("Sales Order ID:", data.message.sales_order); // Log the Sales Order ID
+            } else {
+                alert('Error while ordering. Please try again.');
+            }
+        } else {
+            if (data._server_messages) {
+                const errorMessages = JSON.parse(data._server_messages).join('\n');
+                alert('Error from server:\n' + errorMessages);
+            } else {
+                alert('Unknown error occurred.');
+            }
+        }
+    } catch (error) {
+        console.error('Error placing order:', error);
+        alert('Error placing the order. Please try again later.');
+    }
+}
+
+        document.addEventListener('DOMContentLoaded', fetchRealEstateItems);
+
+
+        // Fetch items when the page loads
+        document.addEventListener('DOMContentLoaded', fetchRealEstateItems);
+    </script>
+
+</div>
+
+<script src="https://unpkg.com/vue@3/dist/vue.global.js"></script>
+<script src="/customer/index.js"></script>  
+  
