@@ -191,6 +191,22 @@ website_route_rules = [
 # User Data Protection
 # --------------------
 
+fixtures = [
+    {
+        "doctype": "Custom Field",
+        "filters": [
+            ["module", "=", "Customer Portal"]
+        ]
+    },
+    {
+        "doctype": "Client Script",
+        "filters": [
+            ["module", "=", "Customer Portal"]
+        ]
+    },
+1
+]
+
 # user_data_fields = [
 # 	{
 # 		"doctype": "{doctype_1}",

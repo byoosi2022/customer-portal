@@ -1,0 +1,533 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Cart</title>
+    <link rel="stylesheet" href="/assets/css/cart.css">
+    <meta name="generator" content="frappe">
+</head>
+<style>
+    body {
+        font-family: Arial, sans-serif;
+        margin: 0;
+        padding: 0;
+        background-color: #f4f4f4;
+    }
+
+    .main-container {
+        display: flex;
+        height: 100vh;
+    }
+
+    .sidebar {
+        width: 250px;
+        background-color: #2c3e50;
+        color: #ecf0f1;
+        padding: 20px;
+        flex-shrink: 0;
+        /* Sidebar retains fixed width */
+    }
+
+    .sidebar h2 {
+        margin-top: 0;
+    }
+
+    .sidebar ul {
+        list-style-type: none;
+        padding: 0;
+    }
+
+    .sidebar ul li {
+        margin: 15px 0;
+    }
+
+    .sidebar ul li a {
+        color: #ecf0f1;
+        text-decoration: none;
+        font-weight: bold;
+        transition: color 0.3s;
+    }
+
+    .sidebar ul li a:hover {
+        color: #3498db;
+    }
+
+    .cart-container {
+        flex-grow: 1;
+        /* Expands to fill remaining space */
+        background-color: #fff;
+        margin-right: 10px;
+        padding: 20px;
+        border-radius: 8px;
+        box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+        max-width: calc(100% - 250px);
+    }
+
+    h1 {
+        text-align: center;
+        color: #333;
+    }
+
+    .cart-table {
+        width: 100%;
+        border-collapse: collapse;
+        margin-top: 20px;
+    }
+
+    .cart-table th,
+    .cart-table td {
+        padding: 12px;
+        text-align: left;
+        border-bottom: 1px solid #ddd;
+    }
+
+    .cart-table th {
+        background-color: #f5f5f5;
+        font-weight: bold;
+        color: #555;
+    }
+
+    .cart-item img {
+        width: 50px;
+        height: 50px;
+        margin-right: 10px;
+        vertical-align: middle;
+    }
+
+    .cart-item span {
+        vertical-align: middle;
+    }
+
+    .quantity-input {
+        width: 50px;
+        padding: 6px;
+        text-align: center;
+        border: 1px solid #ddd;
+        border-radius: 4px;
+    }
+
+    .remove-btn {
+        background-color: #e74c3c;
+        color: #fff;
+        border: none;
+        padding: 8px 12px;
+        border-radius: 4px;
+        cursor: pointer;
+    }
+
+    .remove-btn:hover {
+        background-color: #c0392b;
+    }
+
+    .cart-summary {
+        display: flex;
+        justify-content: space-between;
+        margin-top: 20px;
+        font-size: 18px;
+    }
+
+    .summary-text {
+        color: #555;
+    }
+
+    .summary-value {
+        font-weight: bold;
+        color: #333;
+    }
+
+    .cart-actions {
+        display: flex;
+        justify-content: space-between;
+        margin-top: 20px;
+    }
+
+    .continue-shopping-btn,
+    .checkout-btn {
+        padding: 10px 20px;
+        border: none;
+        border-radius: 4px;
+        cursor: pointer;
+        font-weight: bold;
+        color: #fff;
+        transition: background-color 0.3s;
+    }
+
+    .continue-shopping-btn {
+        background-color: #3498db;
+    }
+
+    .continue-shopping-btn:hover {
+        background-color: #2980b9;
+    }
+
+    .checkout-btn {
+        background-color: #e74c3c;
+    }
+
+    .checkout-btn:hover {
+        background-color: #c0392b;
+    }
+</style>
+
+<body>
+    <div class="main-container">
+        <div class="sidebar">
+            <h2>Menu</h2>
+            <ul>
+                <li><a href="client.html">Home</a></li>
+                <li><a href="customers_orders.html">My Orders</a></li>
+                <li><a href="/client_portal/cart">My Cart</a></li>
+                <li><a href="products.html">Products</a></li>
+                <li><a href="contact.html">Contact Us</a></li>
+                <li id="login-link" style="display: none;"><a href="/login#login">Login</a></li>
+                <li id="logout-link" style="display: none;"><a href="/login#login" onclick="logoutUser()">Logout</a>
+                </li>
+            </ul>
+        </div>
+
+        <div class="cart-container">
+            <h1>My Orders Cart</h1>
+            <table class="cart-table">
+                <thead>
+                    <tr>
+                        <th>Item</th>
+                        <th>Quantity</th>
+                        <th>Price</th>
+                        <th>Total</th>
+                        <th>Actions</th>
+                    </tr>
+                </thead>
+                <tbody id="cart-items">
+                    <!-- Items will be dynamically loaded here -->
+                </tbody>
+            </table>
+            <div class="cart-summary">
+                <span class="summary-text">Subtotal:</span>
+                <span class="summary-value" id="subtotal">₦0.00</span>
+            </div>
+            <div class="cart-actions">
+                <button class="continue-shopping-btn" onclick="window.location.href='client.html'">Continue
+                    Ordering</button>
+                <button class="checkout-btn">Proceed to Checkout</button>
+            </div>
+        </div>
+    </div>
+
+
+    <script>
+        // Check if the user is logged in and toggle login/logout links accordingly
+        function checkLoginStatus() {
+            fetch('/api/method/frappe.auth.get_logged_user', {
+                method: 'GET',
+                credentials: 'include' // Important for sending cookies with the request
+            })
+                .then(response => response.json())
+                .then(data => {
+                    const loginLink = document.getElementById("login-link");
+                    const logoutLink = document.getElementById("logout-link");
+
+                    if (data.message) {
+                        // User is logged in
+                        loginLink.style.display = "none";
+                        logoutLink.style.display = "block";
+                    } else {
+                        // User is not logged in
+                        loginLink.style.display = "block";
+                        logoutLink.style.display = "none";
+                    }
+                })
+                .catch(error => {
+                    console.error("Error checking login status:", error);
+                    // Default to logged-out view if there’s an error
+                    document.getElementById("login-link").style.display = "block";
+                    document.getElementById("logout-link").style.display = "none";
+                });
+        }
+
+        // Log the user out
+        function logoutUser() {
+            fetch('/api/method/logout', {
+                method: 'GET',
+                credentials: 'include'
+            })
+                .then(() => {
+                    window.location.href = "login#login"; // Redirect to login page after logout
+                })
+                .catch(error => console.error("Error logging out:", error));
+        }
+
+        // Call the checkLoginStatus function on page load
+        document.addEventListener("DOMContentLoaded", checkLoginStatus);
+        // Function to format currency with commas and two decimal places
+        function formatCurrency(amount) {
+            return `₦ ${parseFloat(amount).toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}`;
+        }
+
+        // Load items from the cart and display them
+        function loadCartItems() {
+            const cartItems = JSON.parse(localStorage.getItem('cart')) || [];
+            const cartItemsContainer = document.getElementById('cart-items');
+            const subtotalElement = document.getElementById('subtotal');
+
+            cartItemsContainer.innerHTML = '';
+            let subtotal = 0;
+
+            cartItems.forEach((item, index) => {
+                if (item.price && item.quantity) { // Check if price and quantity exist
+                    const itemTotal = item.price * item.quantity;
+                    subtotal += itemTotal;
+
+                    cartItemsContainer.innerHTML += `
+                        <tr>
+                            <td class="cart-item">
+                                <img src="${item.image || 'https://via.placeholder.com/50x50'}" alt="${item.item_name}">
+                                <span>${item.item_name}</span>
+                            </td>
+                            <td>
+                                <input type="number" value="${item.quantity}" min="1" class="quantity-input" onchange="updateQuantity(${index}, this.value)">
+                            </td>
+                            <td class="unit-price">${formatCurrency(item.price)}</td>
+                            <td class="item-total" id="item-total-${index}">${formatCurrency(itemTotal)}</td>
+                            <td>
+                                <button class="remove-btn" onclick="removeItem(${index})">Remove</button>
+                            </td>
+                        </tr>
+                    `;
+                }
+            });
+
+            // Ensure subtotal is formatted correctly
+            subtotalElement.innerText = formatCurrency(subtotal);
+        }
+
+        // Remove item from cart and local storage postSalesOrder
+        function removeItem(index) {
+            let cartItems = JSON.parse(localStorage.getItem('cart')) || [];
+            cartItems.splice(index, 1);
+            localStorage.setItem('cart', JSON.stringify(cartItems));
+            loadCartItems();
+        }
+
+        async function postSalesOrder() {
+    const cartItems = JSON.parse(localStorage.getItem('cart')) || [];
+
+    // Show loading message and spinner
+    const loadingContainer = document.createElement('div');
+    loadingContainer.id = 'loadingContainer';
+    loadingContainer.style.position = 'fixed';
+    loadingContainer.style.top = '0';
+    loadingContainer.style.left = '0';
+    loadingContainer.style.width = '100%';
+    loadingContainer.style.height = '100%';
+    loadingContainer.style.display = 'flex';
+    loadingContainer.style.alignItems = 'center';
+    loadingContainer.style.justifyContent = 'center';
+    loadingContainer.style.backgroundColor = 'rgba(0, 0, 0, 0.7)';
+    loadingContainer.style.zIndex = '9999';
+
+    const loadingMessage = document.createElement('div');
+    loadingMessage.innerText = 'Processing your order, please wait...';
+    loadingMessage.style.color = '#fff';
+    loadingMessage.style.marginBottom = '10px';
+    loadingMessage.style.fontSize = '18px';
+
+    const spinner = document.createElement('div');
+    spinner.className = 'spinner';
+
+    loadingContainer.appendChild(loadingMessage);
+    loadingContainer.appendChild(spinner);
+    document.body.appendChild(loadingContainer);
+
+    const orderData = {
+        series: `SAL-ORD-${new Date().getFullYear()}.`,
+        order_type: "Sales",
+        customer: '',
+        date: new Date().toISOString().slice(0, 10),
+        delivery_date: new Date().toISOString().slice(0, 10),
+        company: "METRO AND CASTLE LIMITED",
+        project: "PROJ-0025",
+        items: []
+    };
+
+    let csrfToken = '';
+
+    try {
+        // Fetch CSRF token
+        const csrfResponse = await $.ajax({
+            url: 'https://portal.metrogroupng.com/api/method/customer_portal.custom_api.auth.regenerate_session',
+            type: 'GET',
+            xhrFields: { withCredentials: true }
+        });
+
+        csrfToken = csrfResponse.message.csrf_token;
+        console.log("CSRF Token:", csrfToken); // Log token to verify retrieval
+        document.cookie = `X-Frappe-CSRF-Token=${csrfToken}; path=/`; // Set CSRF token as cookie
+
+        // Fetch customer data
+        const customerResponse = await $.ajax({
+            url: 'https://portal.metrogroupng.com/api/method/customer_portal.custom_api.create_order.get_customer_for_logged_in_user',
+            type: 'GET',
+            xhrFields: { withCredentials: true }
+        });
+
+        if (customerResponse.message) {
+            orderData.customer = customerResponse.message.customer;
+        } else {
+            alert('Unable to fetch customer data. Please try again or log in to the portal.');
+            removeLoadingMessage();
+            return;
+        }
+    } catch (error) {
+        console.error('Error fetching data:', error);
+        alert('An error occurred while fetching data.');
+        removeLoadingMessage();
+        return;
+    }
+
+    cartItems.forEach(item => {
+        if (item.item_name && item.quantity > 0) {
+            orderData.items.push({
+                item_code: item.item_name,
+                delivery_date: orderData.delivery_date,
+                qty: item.quantity,
+                item_name: item.item_name,
+                rate: item.price,
+                warehouse: "Metro and Castle Warehouse - MACL"
+            });
+        }
+    });
+
+    if (orderData.items.length === 0) {
+        alert('No items with quantity greater than zero to post.');
+        removeLoadingMessage();
+        return;
+    }
+
+    try {
+        // Post the sales order with CSRF token as header and cookie
+        const orderResponse = await $.ajax({
+            url: 'https://portal.metrogroupng.com/api/method/customer_portal.custom_api.sales_order_api.post_sales_order',
+            type: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+                'X-Frappe-CSRF-Token': csrfToken  // Ensure csrfToken has a valid value
+            },
+            xhrFields: { withCredentials: true }, // Maintain session cookies
+            data: JSON.stringify({ order_data: orderData }),
+            success: function(orderResult) {
+                console.log('Order Result:', orderResult);
+                if (orderResult.message.success) {
+                    alert('Your order was created successfully!');
+                    localStorage.removeItem('cart');
+                    window.location.href = '/client_portal/cart.html';
+                } else {
+                    const errorMessage = typeof orderResult.message === 'object'
+                        ? JSON.stringify(orderResult.message)
+                        : orderResult.message;
+                    alert('Failed to create sales order: ' + errorMessage);
+                }
+            },
+            error: function(error) {
+                console.error('Error posting sales order:', error);
+                alert('An error occurred while creating the sales order.');
+            },
+            complete: function() {
+                removeLoadingMessage();
+            }
+        });
+
+    } catch (error) {
+        console.error('Error posting sales order:', error);
+        alert('An error occurred while creating the sales order.');
+    }
+}
+
+function removeLoadingMessage() {
+    const loadingContainer = document.getElementById('loadingContainer');
+    if (loadingContainer) {
+        loadingContainer.remove();
+    }
+}
+
+
+        // CSS for spinner
+        const style = document.createElement('style');
+        style.innerHTML = `
+    .spinner {
+        border: 8px solid rgba(255, 255, 255, 0.3);
+        border-left-color: #ffffff;
+        border-radius: 50%;
+        width: 40px;
+        height: 40px;
+        animation: spin 1s linear infinite;
+    }
+
+    @keyframes spin {
+        0% { transform: rotate(0deg); }
+        100% { transform: rotate(360deg); }
+    }
+`;
+        document.head.appendChild(style);
+
+
+        // Add event listener for the checkout button
+        document.querySelector('.checkout-btn').addEventListener('click', postSalesOrder);
+
+        // JavaScript to handle quantity changes, removing items, and updating totals
+        document.addEventListener('DOMContentLoaded', function () {
+            const cartItems = document.getElementById('cart-items');
+            const subtotalElement = document.getElementById('subtotal');
+
+            // Function to update subtotal
+            function updateSubtotal() {
+                let subtotal = 0;
+                cartItems.querySelectorAll('.item-total').forEach(item => {
+                    // Correctly parse the total without currency symbol
+                    subtotal += parseFloat(item.textContent.replace('₦', '').replace(/,/g, '').trim()) || 0;
+                });
+                subtotalElement.textContent = formatCurrency(subtotal); // Updating subtotal with currency symbol
+            }
+
+            // Function to update item total based on quantity and unit price
+            function updateItemTotal(row) {
+                const quantityInput = row.querySelector('.quantity-input');
+                const quantity = parseInt(quantityInput.value, 10) || 0; // Default to 0 if NaN
+                const unitPriceText = row.querySelector('.unit-price').textContent.replace('₦', '').replace(/,/g, '').trim();
+                const unitPrice = parseFloat(unitPriceText); // Handle currency format
+
+                // Calculate the total for this item
+                const total = quantity * unitPrice;
+
+                // Update the item total with formatted currency
+                row.querySelector('.item-total').textContent = formatCurrency(total);
+            }
+
+            // Event delegation for remove buttons and quantity change
+            cartItems.addEventListener('click', function (event) {
+                if (event.target.classList.contains('remove-btn')) {
+                    const row = event.target.closest('tr');
+                    const index = Array.from(cartItems.children).indexOf(row); // Get the index of the row
+                    removeItem(index); // Call removeItem function
+                }
+            });
+
+            // Event listener for quantity change to update item total and subtotal
+            cartItems.addEventListener('input', function (event) {
+                if (event.target.classList.contains('quantity-input')) {
+                    const row = event.target.closest('tr');
+                    updateItemTotal(row);  // Update total for this row
+                    updateSubtotal();      // Update subtotal after quantity change
+                }
+            });
+
+            // Load cart items on page load
+            loadCartItems();
+        });
+    </script>
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+
+</body>
+
+</html>

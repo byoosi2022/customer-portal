@@ -1,11 +1,16 @@
 # In your custom app, create a whitelisted API function to fetch items
 import frappe
-
 @frappe.whitelist(allow_guest=True)
-def get_real_estate_items():
+def get_real_estate_items(search=None):
     # Get all items with item_group 'REAL ESTATE'
+    filters = {'item_group': 'REAL ESTATE'}
+
+    # If a search term is provided, add it to the filters
+    if search:
+        filters['item_name'] = ['like', f'%{search}%']  # Use 'like' for partial matching
+
     items = frappe.get_all('Item', 
-        filters={'item_group': 'REAL ESTATE'}, 
+        filters=filters, 
         fields=['item_name', 'item_code', 'image', 'description']
     )
     
@@ -17,4 +22,5 @@ def get_real_estate_items():
         )
         item['price'] = price_data if price_data else 'N/A'  # Set 'N/A' if price is not found
     
-    return items
+    return items or []
+
