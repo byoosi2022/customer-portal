@@ -203,13 +203,15 @@
     <!-- Navigation Bar -->
     <nav class="navbar">
         <ul>
-            <!-- <li><a href="#home">Home</a></li>
+            <li><a href="#home">Home</a></li>
             <li><a href="/client_portal/client">Listings</a></li>
-            <li><a href="/client_portal/customers_orders">My Orders</a></li> -->
+            <li><a href="/client_portal/customers_orders">My Orders</a></li>
+            <li id="login-link" style="display: none;"><a href="/client_portal/access_portal/login#">Login</a></li>
+            <li id="logout-link" style="display: none;"><a href="/client_portal/access_portal/login#" onclick="logoutUser()">Logout</a>
 
-            <li><a href="#">Home</a></li>
+            <!-- <li><a href="#">Home</a></li>
             <li><a href="#">Listings</a></li>
-            <li><a href="#">My Orders</a></li>
+            <li><a href="#">My Orders</a></li> -->
         </ul>
     </nav>
     <div class="container">
@@ -223,6 +225,53 @@
     </div>
 
     <script>
+        // Check if the user is logged in and toggle login/logout links accordingly
+        function checkLoginStatus() {
+            fetch('/api/method/frappe.auth.get_logged_user', {
+                method: 'GET',
+                credentials: 'include' // Important for sending cookies with the request
+            })
+                .then(response => response.json())
+                .then(data => {
+                    const loginLink = document.getElementById("login-link");
+                    const logoutLink = document.getElementById("logout-link");
+
+                    if (data.message) {
+                        // User is logged in
+                        loginLink.style.display = "none";
+                        logoutLink.style.display = "block";
+                    } else {
+                        // User is not logged in
+                        loginLink.style.display = "block";
+                        logoutLink.style.display = "none";
+                    }
+                })
+                .catch(error => {
+                    console.error("Error checking login status:", error);
+                    // Default to logged-out view if there’s an error
+                    document.getElementById("login-link").style.display = "block";
+                    document.getElementById("logout-link").style.display = "none";
+                });
+        }
+
+        // Log the user out
+        function logoutUser() {
+            fetch('/api/method/logout', {
+                method: 'GET',
+                credentials: 'include'
+            })
+                .then(() => {
+                    window.location.href = "/client_portal/access_portal/login#"; // Redirect to login page after logout
+                })
+                .catch(error => console.error("Error logging out:", error));
+        }
+
+        // Call the checkLoginStatus function on page load
+        document.addEventListener("DOMContentLoaded", () => {
+            checkLoginStatus();
+            fetchRealEstateItems(); // Fetch items on page load
+        });
+
         // Fetch items with 'REAL ESTATE' item group from Frappe
         async function fetchRealEstateItems(search = '') {
             try {
@@ -239,65 +288,51 @@
 
         // Search for items based on user input
         function searchItems() {
-            const searchTerm = document.getElementById('search').value;
+            const searchTerm = document.getElementById("search").value;
             fetchRealEstateItems(searchTerm);
         }
 
-        // Display items in thumbnail style
+        // Display fetched items in the UI
         function displayItems(items) {
-            const itemList = document.getElementById('item-list');
-            itemList.innerHTML = '';
+            const itemList = document.getElementById("item-list");
+            itemList.innerHTML = ''; // Clear previous items
 
+            if (items.length === 0) {
+                itemList.innerHTML = '<p>No items found.</p>'; // Display message if no items are found
+                return;
+            }
+
+            // Create item cards and append them to the grid
             items.forEach(item => {
-                const itemHTML = `
-                    <div class="thumb-item">
-                        <img src="${item.image || 'https://via.placeholder.com/200x150'}" alt="${item.item_name}">
-                        <h3>${item.item_name}</h3>
-                        <p class="price">₦ ${item.price || 'N/A'}</p>
-                        <div class="button-container">
-                            <button onclick="addToCart('${item.item_code}', '${item.item_name}', '${item.price}', '${item.image || ''}')">Order Now</button>
-                            <button onclick="viewCart()">View Orders</button>
-                        </div>
+                const itemCard = document.createElement("div");
+                itemCard.className = "thumb-item";
+
+                itemCard.innerHTML = `
+                    <img src="${item.image || 'default-image.jpg'}" alt="${item.item_name}">
+                    <h3>${item.item_name}</h3>
+                    <p>${item.description || 'No description available.'}</p>
+                    <p class="price">$${item.price !== 'N/A' ? item.price : 'Price not available'}</p>
+                    <div class="button-container">
+                        <button onclick="viewItem('${item.item_code}')">View Details</button>
+                        <button onclick="addToCart('${item.item_code}')">Add to Cart</button>
                     </div>
                 `;
-                itemList.innerHTML += itemHTML;
+                itemList.appendChild(itemCard);
             });
         }
 
-        // Function to view the cart
-        function viewCart() {
-            // window.location.href = 'cart.html'; // Redirect to the cart page
-            window.location.href = '/client_portal/client';
+        // Function to view item details (stub for future implementation)
+        function viewItem(itemCode) {
+            // Implement item detail view logic here
+            alert(`Viewing details for item: ${itemCode}`);
         }
 
-        // Add item to cart
-        function addToCart(itemCode, itemName, price, image) {
-            const cart = JSON.parse(localStorage.getItem('cart')) || [];
-            const itemIndex = cart.findIndex(item => item.item_code === itemCode);
-
-            if (itemIndex === -1) {
-                // If item is not in the cart, add it with quantity 1
-                cart.push({
-                    item_code: itemCode,
-                    item_name: itemName,
-                    price: parseFloat(price),
-                    quantity: 1,
-                    image: image
-                });
-            } else {
-                // If item is already in the cart, increase the quantity
-                cart[itemIndex].quantity += 1;
-            }
-
-            localStorage.setItem('cart', JSON.stringify(cart));
-            alert('Item added to cart!');
+        // Function to add an item to the cart (stub for future implementation)
+        function addToCart(itemCode) {
+            // Implement add to cart logic here
+            alert(`Added item to cart: ${itemCode}`);
         }
-
-        document.addEventListener('DOMContentLoaded', () => {
-            fetchRealEstateItems(); // Fetch all items on initial load
-        });
     </script>
-
 
 </body>
 

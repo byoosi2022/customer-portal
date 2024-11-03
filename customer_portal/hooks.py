@@ -11,6 +11,7 @@ app_license = "MIT"
 # include js, css files in header of desk.html
 # app_include_css = "/assets/customer_portal/css/customer_portal.css"
 # app_include_js = "/assets/customer_portal/js/customer_portal.js"
+app_include_js = "/assets/customer_portal/js/custom_script.js"
 
 # include js, css files in header of web template
 # web_include_css = "/assets/customer_portal/css/customer_portal.css"
@@ -36,6 +37,10 @@ website_route_rules = [
 # doctype_list_js = {"doctype" : "public/js/doctype_list.js"}
 # doctype_tree_js = {"doctype" : "public/js/doctype_tree.js"}
 # doctype_calendar_js = {"doctype" : "public/js/doctype_calendar.js"}
+# doctype_js = {
+#     "Sales Order": "public/js/custom_script.js"
+# }
+
 
 # Home Pages
 # ----------
@@ -121,34 +126,35 @@ website_route_rules = [
 # ---------------
 # Hook on document methods and events
 
-# doc_events = {
-# 	"*": {
-# 		"on_update": "method",
-# 		"on_cancel": "method",
-# 		"on_trash": "method"
-# 	}
-# }
+doc_events = {
+	"Sales Order": {
+		"on_update": "customer_portal.custom_api.sales_invoice.update_penalty_and_create_invoice",
+		# "on_cancel": "method",
+		# "on_trash": "method"
+	}
+}
 
 # Scheduled Tasks
 # ---------------
+# hooks.py
 
-# scheduler_events = {
-# 	"all": [
-# 		"customer_portal.tasks.all"
-# 	],
-# 	"daily": [
-# 		"customer_portal.tasks.daily"
-# 	],
-# 	"hourly": [
-# 		"customer_portal.tasks.hourly"
-# 	],
-# 	"weekly": [
-# 		"customer_portal.tasks.weekly"
-# 	],
-# 	"monthly": [
-# 		"customer_portal.tasks.monthly"
-# 	],
-# }
+scheduler_events = {
+    # "all": [
+    #     "customer_portal.tasks.all"
+    # ],
+    "hourly": [
+        "customer_portal.custom_api.sales_invoice.enqueue_penalty_update"
+    ],
+    # "hourly": [
+    #     "customer_portal.tasks.hourly"
+    # ],
+    # "weekly": [
+    #     "customer_portal.tasks.weekly"
+    # ],
+    # "monthly": [
+    #     "customer_portal.tasks.monthly"
+    # ],
+}
 
 # Testing
 # -------

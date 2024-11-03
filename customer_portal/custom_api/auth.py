@@ -98,3 +98,70 @@ def regenerate_session():
     except frappe.PermissionError as e:
         return {"error": str(e)}
 
+import frappe
+from frappe import throw, msgprint, _
+
+@frappe.whitelist(allow_guest=True)
+def login(usr, pwd):
+    try:
+        login_manager = frappe.auth.LoginManager()
+        login_manager.authenticate(user=usr, pwd=pwd)
+        login_manager.post_login()
+    except frappe.exceptions.AuthenticationError:
+        frappe.clear_messages()
+        frappe.local.response["message"] = {
+            "success_key": 0,
+            "message": "Authentication Failed"
+        }
+        return
+
+    user = frappe.get_doc('User', frappe.session.user)
+
+    # Generate a new API secret key for the user
+    new_api_secret = user.custom_secret
+
+    frappe.response["message"] = {
+        "sid": frappe.session.sid,
+        "user": user.name,
+        "api_key": user.api_key,
+        "api_secret": new_api_secret
+    }
+    return
+
+# signup.py
+import frappe
+from frappe import _
+
+import frappe
+from frappe import _
+
+@frappe.whitelist(allow_guest=True)
+def sign_up(first_name, email, password):
+    # Check if the email is already registered
+    if frappe.db.exists("User", email):
+        frappe.throw(_("Email already exists."))
+
+    # Create a new user
+    user = frappe.new_doc("User")
+    user.first_name = first_name
+    user.email = email
+    user.username = email  # Use email as the username
+    user.new_password = password  # Set the user's password
+    user.role_profile_name = "portal"  # Set the user's role_profile_name
+    user.enabled = 1  # Enable the user
+
+    try:
+        user.insert(ignore_permissions=True)  # Ignore permissions for the insert
+    except frappe.PermissionError:
+        frappe.throw(_("Insufficient permissions to create user."))
+
+    # Optionally, send a welcome email to the user
+    frappe.sendmail(
+        recipients=[email],
+        subject=_("Welcome to ERPNext!"),
+        message=_("Thank you for signing up, {}! You can now log in using your email and password.").format(first_name)
+    )
+
+    return {
+        "message": _("User created successfully.")
+    }

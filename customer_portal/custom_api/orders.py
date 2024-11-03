@@ -31,7 +31,8 @@ def get_customer_sales_orders():
         # Fetch payment schedule for the order
         payment_schedule = frappe.get_all('Payment Schedule',
                                           filters={'parent': order.name},
-                                          fields=['payment_term', 'due_date', 'invoice_portion', 'payment_amount', 'outstanding'])
+                                          fields=['payment_term', 'due_date', 'custom_penality_percent',
+                                                  'custom_penality_amount','custom_payment_amount_penality','invoice_portion', 'payment_amount', 'outstanding'])
         order['payment_schedule'] = payment_schedule
 
     return {'sales_orders': sales_orders}
