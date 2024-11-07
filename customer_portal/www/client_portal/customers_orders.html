@@ -356,8 +356,7 @@
                     // Calculate total advance paid using reduce on salesOrders
                     let totalAdvancePaid = salesOrders.reduce((acc, order) => acc + order.advance_paid, 0);
                     // Calculate the balance as total amount - total advance paid
-                    let balance = totalAmount - totalAdvancePaid;
-
+                   
                     // After all orders are processed, add the total amount row
                     const totalRow = document.createElement('tr');
                     totalRow.innerHTML = `
@@ -378,6 +377,8 @@
                             totalPaymentPenaltyAmount += schedule.custom_payment_amount_penality || 0;
                         });
                     });
+                    let balance = totalPaymentPenaltyAmount - totalAdvancePaid;
+
                     // Add the row for Total Payment Amount + Penalty
                     const paymentAmountPenalityRow = document.createElement('tr');
                     paymentAmountPenalityRow.innerHTML = `
