@@ -1,0 +1,335 @@
+General Reset and Body Styles
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+body {
+    font-family: Arial, sans-serif;
+    background-color: #f5f5f5;
+    color: #333;
+    line-height: 1.6;
+}
+
+/* Navigation Bar Styling */
+.navbar {
+    background-color: #333;
+    padding: 10px 20px;
+    position: fixed;  /* Fix the navbar at the top */
+    top: 0;           /* Position it at the top */
+    left: 0;          /* Align it to the left */
+    width: 100%;      /* Make the navbar span the full width */
+    z-index: 1000;    /* Ensure it stays above other elements */
+}
+
+.navbar ul {
+    list-style: none;
+    display: flex;
+    justify-content: space-around;
+    align-items: center;
+    margin: 0;  /* Remove default margin */
+    padding: 0;  /* Remove default padding */
+}
+
+.navbar ul li {
+    padding: 0 15px;
+}
+
+.navbar ul li a {
+    color: #fff;
+    text-decoration: none;
+    font-weight: bold;
+}
+
+.navbar ul li a:hover {
+    color: #ff9800;
+}
+
+/* To prevent content from being hidden under the fixed navbar */
+body {
+    padding-top: 60px; /* Adjust based on the height of your navbar */
+}
+
+
+/* Container and Layout */
+.container {
+    display: flex;
+    padding: 20px;
+    max-width: 1200px;
+    margin: 0 auto;
+}
+
+/* Sidebar Styling */
+.sidebar {
+    width: 25%;
+    padding: 20px;
+    background-color: #7b81dd; /* Blue background */
+    border-radius: 5px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+}
+
+.sidebar h2, .sidebar h3 {
+    margin-bottom: 15px;
+    color: #fff; /* Change heading text color to white for better contrast */
+}
+
+.sidebar ul {
+    list-style: none;
+    padding-left: 0;
+}
+
+.sidebar ul li {
+    margin-bottom: 10px;
+}
+
+.sidebar ul li a {
+    text-decoration: none;
+    color: #fff; /* Change link text color to white */
+    font-weight: bold;
+}
+
+.sidebar ul li a:hover {
+    color: #ff5722; /* Hover color remains the same */
+}
+
+
+/* Main Content Styling */
+.main-content {
+    width: 75%;
+    padding: 20px;
+    margin-left: 20px;
+    background-color: #fff;
+    border-radius: 5px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+}
+
+.main-content h1 {
+    font-size: 24px;
+    color: #333;
+    margin-bottom: 20px;
+}
+
+#selected-filters {
+    margin-bottom: 20px;
+}
+
+#filter-instructions {
+    font-style: italic;
+    color: #777;
+}
+
+#selected-filters p {
+    margin: 5px 0;
+}
+
+#search {
+    width: 100%;
+    padding: 10px;
+    font-size: 16px;
+    margin-bottom: 20px;
+    border: 1px solid #ddd;
+    border-radius: 5px;
+}
+
+/* Item Grid Layout */
+.thumb-grid {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 20px;
+    justify-content: space-between;
+}
+
+.thumb-item {
+    width: 23%; /* Adjusted width for 4 items per row */
+    background-color: #fff;
+    border: 1px solid #ddd;
+    border-radius: 5px;
+    overflow: hidden;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    text-align: center;
+    padding: 10px;
+    box-sizing: border-box;
+    transition: transform 0.3s;
+}
+
+.thumb-item:hover {
+    transform: scale(1.05);
+}
+
+/* Image Styling within Card */
+.thumb-item img {
+    width: 100%;
+    height: auto;
+    border-bottom: 1px solid #ddd;
+}
+
+.thumb-item h3 {
+    font-size: 18px;
+    color: #333;
+    margin: 10px 0;
+}
+
+.thumb-item p {
+    color: #777;
+    margin: 5px 0;
+}
+
+/* Price and Quantity Styling */
+.thumb-item .price {
+    font-weight: bold;
+    color: #333;
+}
+
+.thumb-item .quantity {
+    color: #ff5722;
+    font-weight: bold;
+}
+
+/* Button Container Styling */
+.button-container {
+    display: flex;
+    justify-content: space-around;
+    gap: 10px; /* Adds space between buttons */
+    margin-top: 10px;
+}
+
+.button-container button {
+    padding: 8px 12px;
+    border: none;
+    border-radius: 4px;
+    color: #fff;
+    background-color: #333;
+    cursor: pointer;
+    transition: background-color 0.3s;
+    width: 45%; /* Ensures the buttons are smaller and spaced */
+}
+
+.button-container button:hover {
+    background-color: #ff9800;
+}
+
+
+/* Loading Indicator Styling */
+#loading-indicator {
+    position: fixed;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    background-color: rgba(0, 0, 0, 0.8);
+    color: #fff;
+    padding: 20px;
+    border-radius: 5px;
+    text-align: center;
+    font-size: 18px;
+}
+
+
+/* dialog box */
+/* Modal styling */
+.modal {
+    display: none;
+    position: fixed;
+    z-index: 1;
+    padding-top: 80px;
+    left: 0;
+    top: 0;
+    width: 100%;
+    height: 100%;
+    overflow: auto;
+    background-color: rgba(0, 0, 0, 0.5);
+}
+
+.modal-content {
+    background-color: #ffffff;
+    margin: auto;
+    padding: 30px;
+    border-radius: 8px;
+    width: 70%;
+    max-width: 600px;
+    box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.1);
+    text-align: center;
+}
+
+.close {
+    color: #aaa;
+    font-size: 28px;
+    font-weight: bold;
+    float: right;
+    cursor: pointer;
+}
+
+.close:hover,
+.close:focus {
+    color: #555;
+    text-decoration: none;
+}
+
+/* Styling for company buttons */
+#modal-company-list {
+    list-style-type: none;
+    padding: 0;
+    margin-top: 20px;
+    display: flex;
+    flex-direction: column;
+    gap: 10px; /* Space between buttons */
+}
+
+#modal-company-list li {
+    margin: 0; /* Remove margin to make buttons flush with modal content width */
+}
+
+#modal-company-list button {
+    background-color: #4CAF50;
+    color: white;
+    padding: 12px 0;
+    font-size: 16px;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    width: 100%; /* Make button take full width of modal content */
+    transition: background-color 0.3s ease;
+}
+
+#modal-company-list button:hover {
+    background-color: #45a049;
+}
+
+/* Styling for the cart icon */
+.cart-icon {
+    position: relative;
+    font-size: 24px;
+    color: #333; /* Customize icon color */
+    text-decoration: none;
+}
+
+/* Position the item count badge */
+#cart-count {
+    position: absolute;
+    top: -5px;
+    right: -10px;
+    background-color: #ff0000;
+    color: white;
+    font-size: 12px;
+    padding: 3px 7px;
+    border-radius: 50%;
+    font-weight: bold;
+}
+
+/* Styling for the category search input */
+#category-search {
+    width: 90%;              /* Adjust width as needed */
+    padding: 8px;            /* Add some padding for a better look */
+    margin: 10px 0;          /* Add some margin for spacing around */
+    font-size: 14px;         /* Font size for readability */
+    border: 1px solid #ccc;  /* Light border */
+    border-radius: 4px;      /* Rounded corners */
+    outline: none;           /* Remove outline on focus */
+}
+
+/* Focus styling to highlight input */
+#category-search:focus {
+    border-color: #007BFF;   /* Change border color on focus */
+    box-shadow: 0 0 5px rgba(0, 123, 255, 0.5);  /* Add subtle shadow */
+}
+

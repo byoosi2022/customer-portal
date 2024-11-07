@@ -182,7 +182,8 @@
                 <li><a href="products.html">Products</a></li>
                 <li><a href="contact.html">Contact Us</a></li>
                 <li id="login-link" style="display: none;"><a href="/client_portal/access_portal/login#">Login</a></li>
-                <li id="logout-link" style="display: none;"><a href="/client_portal/access_portal/login#" onclick="logoutUser()">Logout</a>
+                <li id="logout-link" style="display: none;"><a href="/client_portal/access_portal/login#"
+                        onclick="logoutUser()">Logout</a>
                 </li>
             </ul>
         </div>
@@ -309,147 +310,154 @@
             localStorage.setItem('cart', JSON.stringify(cartItems));
             loadCartItems();
         }
-
         async function postSalesOrder() {
-    const cartItems = JSON.parse(localStorage.getItem('cart')) || [];
+            const cartItems = JSON.parse(localStorage.getItem('cart')) || [];
 
-    // Show loading message and spinner
-    const loadingContainer = document.createElement('div');
-    loadingContainer.id = 'loadingContainer';
-    loadingContainer.style.position = 'fixed';
-    loadingContainer.style.top = '0';
-    loadingContainer.style.left = '0';
-    loadingContainer.style.width = '100%';
-    loadingContainer.style.height = '100%';
-    loadingContainer.style.display = 'flex';
-    loadingContainer.style.alignItems = 'center';
-    loadingContainer.style.justifyContent = 'center';
-    loadingContainer.style.backgroundColor = 'rgba(0, 0, 0, 0.7)';
-    loadingContainer.style.zIndex = '9999';
+            // Check if any item in the cart has a selected company
+            const selectedCompany = cartItems[0]?.company || null; // Assuming all items in cart belong to the same company
 
-    const loadingMessage = document.createElement('div');
-    loadingMessage.innerText = 'Processing your order, please wait...';
-    loadingMessage.style.color = '#fff';
-    loadingMessage.style.marginBottom = '10px';
-    loadingMessage.style.fontSize = '18px';
+            if (!selectedCompany) {
+                alert('Please select a company before posting the order.');
+                return;
+            }
 
-    const spinner = document.createElement('div');
-    spinner.className = 'spinner';
+            // Show loading message and spinner
+            const loadingContainer = document.createElement('div');
+            loadingContainer.id = 'loadingContainer';
+            loadingContainer.style.position = 'fixed';
+            loadingContainer.style.top = '0';
+            loadingContainer.style.left = '0';
+            loadingContainer.style.width = '100%';
+            loadingContainer.style.height = '100%';
+            loadingContainer.style.display = 'flex';
+            loadingContainer.style.alignItems = 'center';
+            loadingContainer.style.justifyContent = 'center';
+            loadingContainer.style.backgroundColor = 'rgba(0, 0, 0, 0.7)';
+            loadingContainer.style.zIndex = '9999';
 
-    loadingContainer.appendChild(loadingMessage);
-    loadingContainer.appendChild(spinner);
-    document.body.appendChild(loadingContainer);
+            const loadingMessage = document.createElement('div');
+            loadingMessage.innerText = 'Processing your order, please wait...';
+            loadingMessage.style.color = '#fff';
+            loadingMessage.style.marginBottom = '10px';
+            loadingMessage.style.fontSize = '18px';
 
-    const orderData = {
-        series: `SAL-ORD-${new Date().getFullYear()}.`,
-        order_type: "Sales",
-        customer: '',
-        date: new Date().toISOString().slice(0, 10),
-        delivery_date: new Date().toISOString().slice(0, 10),
-        company: "METRO AND CASTLE LIMITED",
-        project: "PROJ-0025",
-        items: []
-    };
+            const spinner = document.createElement('div');
+            spinner.className = 'spinner';
 
-    let csrfToken = '';
+            loadingContainer.appendChild(loadingMessage);
+            loadingContainer.appendChild(spinner);
+            document.body.appendChild(loadingContainer);
 
-    try {
-        // Fetch CSRF token
-        const csrfResponse = await $.ajax({
-            url: 'https://portal.metrogroupng.com/api/method/customer_portal.custom_api.auth.regenerate_session',
-            type: 'GET',
-            xhrFields: { withCredentials: true }
-        });
+            const orderData = {
+                series: `SAL-ORD-${new Date().getFullYear()}.`,
+                order_type: "Sales",
+                customer: '',
+                date: new Date().toISOString().slice(0, 10),
+                delivery_date: new Date().toISOString().slice(0, 10),
+                company: selectedCompany,  // Set company to the selected one
+                project: "PROJ-0025",
+                items: []
+            };
 
-        csrfToken = csrfResponse.message.csrf_token;
-        console.log("CSRF Token:", csrfToken); // Log token to verify retrieval
-        document.cookie = `X-Frappe-CSRF-Token=${csrfToken}; path=/`; // Set CSRF token as cookie
+            let csrfToken = '';
 
-        // Fetch customer data
-        const customerResponse = await $.ajax({
-            url: 'https://portal.metrogroupng.com/api/method/customer_portal.custom_api.create_order.get_customer_for_logged_in_user',
-            type: 'GET',
-            xhrFields: { withCredentials: true }
-        });
+            try {
+                // Fetch CSRF token
+                const csrfResponse = await $.ajax({
+                    url: 'https://portal.metrogroupng.com/api/method/customer_portal.custom_api.auth.regenerate_session',
+                    type: 'GET',
+                    xhrFields: { withCredentials: true }
+                });
 
-        if (customerResponse.message) {
-            orderData.customer = customerResponse.message.customer;
-        } else {
-            alert('Unable to fetch customer data. Please try again or log in to the portal.');
-            removeLoadingMessage();
-            return;
-        }
-    } catch (error) {
-        console.error('Error fetching data:', error);
-        alert('An error occurred while fetching data.');
-        removeLoadingMessage();
-        return;
-    }
+                csrfToken = csrfResponse.message.csrf_token;
+                console.log("CSRF Token:", csrfToken); // Log token to verify retrieval
+                document.cookie = `X-Frappe-CSRF-Token=${csrfToken}; path=/`; // Set CSRF token as cookie
 
-    cartItems.forEach(item => {
-        if (item.item_name && item.quantity > 0) {
-            orderData.items.push({
-                item_code: item.item_name,
-                delivery_date: orderData.delivery_date,
-                qty: item.quantity,
-                item_name: item.item_name,
-                rate: item.price,
-                warehouse: "Metro and Castle Warehouse - MACL"
-            });
-        }
-    });
+                // Fetch customer data
+                const customerResponse = await $.ajax({
+                    url: 'https://portal.metrogroupng.com/api/method/customer_portal.custom_api.create_order.get_customer_for_logged_in_user',
+                    type: 'GET',
+                    xhrFields: { withCredentials: true }
+                });
 
-    if (orderData.items.length === 0) {
-        alert('No items with quantity greater than zero to post.');
-        removeLoadingMessage();
-        return;
-    }
-
-    try {
-        // Post the sales order with CSRF token as header and cookie
-        const orderResponse = await $.ajax({
-            url: 'https://portal.metrogroupng.com/api/method/customer_portal.custom_api.sales_order_api.post_sales_order',
-            type: 'POST',
-            headers: {
-                'Content-Type': 'application/json',
-                'X-Frappe-CSRF-Token': csrfToken  // Ensure csrfToken has a valid value
-            },
-            xhrFields: { withCredentials: true }, // Maintain session cookies
-            data: JSON.stringify({ order_data: orderData }),
-            success: function(orderResult) {
-                console.log('Order Result:', orderResult);
-                if (orderResult.message.success) {
-                    alert('Your order was created successfully!');
-                    localStorage.removeItem('cart');
-                    window.location.href = '/client_portal/cart.html';
+                if (customerResponse.message) {
+                    orderData.customer = customerResponse.message.customer;
                 } else {
-                    const errorMessage = typeof orderResult.message === 'object'
-                        ? JSON.stringify(orderResult.message)
-                        : orderResult.message;
-                    alert('Failed to create sales order: ' + errorMessage);
+                    alert('Unable to fetch customer data. Please try again or log in to the portal.');
+                    removeLoadingMessage();
+                    return;
                 }
-            },
-            error: function(error) {
+            } catch (error) {
+                console.error('Error fetching data:', error);
+                alert('An error occurred while fetching data.');
+                removeLoadingMessage();
+                return;
+            }
+
+            cartItems.forEach(item => {
+                if (item.item_name && item.quantity > 0) {
+                    orderData.items.push({
+                        item_code: item.item_name,
+                        delivery_date: orderData.delivery_date,
+                        qty: item.quantity,
+                        item_name: item.item_name,
+                        rate: item.price,
+                        warehouse: "Metro and Castle Warehouse - MACL"
+                    });
+                }
+            });
+
+            if (orderData.items.length === 0) {
+                alert('No items with quantity greater than zero to post.');
+                removeLoadingMessage();
+                return;
+            }
+
+            try {
+                // Post the sales order with CSRF token as header and cookie
+                const orderResponse = await $.ajax({
+                    url: 'https://portal.metrogroupng.com/api/method/customer_portal.custom_api.sales_order_api.post_sales_order',
+                    type: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'X-Frappe-CSRF-Token': csrfToken  // Ensure csrfToken has a valid value
+                    },
+                    xhrFields: { withCredentials: true }, // Maintain session cookies
+                    data: JSON.stringify({ order_data: orderData }),
+                    success: function (orderResult) {
+                        console.log('Order Result:', orderResult);
+                        if (orderResult.message.success) {
+                            alert('Your order was created successfully!');
+                            localStorage.removeItem('cart');
+                            window.location.href = '/client_portal/cart.html';
+                        } else {
+                            const errorMessage = typeof orderResult.message === 'object'
+                                ? JSON.stringify(orderResult.message)
+                                : orderResult.message;
+                            alert('Failed to create sales order: ' + errorMessage);
+                        }
+                    },
+                    error: function (error) {
+                        console.error('Error posting sales order:', error);
+                        alert('An error occurred while creating the sales order.');
+                    },
+                    complete: function () {
+                        removeLoadingMessage();
+                    }
+                });
+
+            } catch (error) {
                 console.error('Error posting sales order:', error);
                 alert('An error occurred while creating the sales order.');
-            },
-            complete: function() {
-                removeLoadingMessage();
             }
-        });
+        }
 
-    } catch (error) {
-        console.error('Error posting sales order:', error);
-        alert('An error occurred while creating the sales order.');
-    }
-}
-
-function removeLoadingMessage() {
-    const loadingContainer = document.getElementById('loadingContainer');
-    if (loadingContainer) {
-        loadingContainer.remove();
-    }
-}
+        function removeLoadingMessage() {
+            const loadingContainer = document.getElementById('loadingContainer');
+            if (loadingContainer) {
+                loadingContainer.remove();
+            }
+        }
 
 
         // CSS for spinner

@@ -5,335 +5,90 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Real Estate Items</title>
-    <style>
-        body {
-            font-family: Arial, sans-serif;
-            margin: 0;
-            padding: 0;
-            background-color: #f5f5f5;
-        }
+    <link rel="stylesheet" href="client_custom.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
 
-        .container {
-            max-width: 1200px;
-            margin: 20px auto;
-            padding: 0 15px;
-        }
 
-        .thumb-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
-            grid-gap: 20px;
-        }
-
-        .thumb-item {
-            background-color: #fff;
-            border-radius: 10px;
-            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
-            overflow: hidden;
-            transition: transform 0.2s ease-in-out;
-            padding-bottom: 10px;
-        }
-
-        .thumb-item:hover {
-            transform: translateY(-5px);
-        }
-
-        .thumb-item img {
-            width: 100%;
-            height: 150px;
-            object-fit: cover;
-        }
-
-        .thumb-item h3 {
-            font-size: 1.2rem;
-            margin: 15px;
-        }
-
-        .thumb-item p {
-            font-size: 0.9rem;
-            margin: 0 15px 15px;
-            color: #666;
-        }
-
-        .thumb-item .price {
-            font-weight: bold;
-            color: #333;
-        }
-
-        .thumb-item button {
-            display: block;
-            width: 80%;
-            margin: 0 auto;
-            padding: 10px;
-            background-color: #007bff;
-            color: white;
-            border: none;
-            border-radius: 5px;
-            cursor: pointer;
-        }
-
-        .thumb-item button:hover {
-            background-color: #0056b3;
-        }
-
-        .button-container {
-            display: flex;
-            /* Use Flexbox for layout */
-            justify-content: space-between;
-            /* Space between buttons */
-            margin-top: 10px;
-            /* Space above buttons */
-        }
-
-        .button-container button {
-            margin-right: 10px;
-            /* Space between buttons, except the last one */
-        }
-
-        .button-container button:last-child {
-            margin-right: 0;
-            /* Remove right margin for the last button */
-        }
-
-        /* Optional: Styles for the search input */
-        #search {
-            padding: 10px;
-            margin-bottom: 20px;
-            width: 100%;
-            box-sizing: border-box;
-            border: 1px solid #ccc;
-            border-radius: 4px;
-        }
-
-        /* Styles for the search input field */
-        #search {
-            padding: 10px;
-            /* Space inside the input */
-            margin-bottom: 20px;
-            /* Space below the input */
-            width: 100%;
-            /* Full width */
-            box-sizing: border-box;
-            /* Include padding in width */
-            border: 1px solid #ccc;
-            /* Light grey border */
-            border-radius: 25px;
-            /* Rounded corners */
-            font-size: 16px;
-            /* Font size */
-            transition: border-color 0.3s, box-shadow 0.3s;
-            /* Transition effects */
-        }
-
-        /* Change border color and add shadow on focus */
-        #search:focus {
-            border-color: #007BFF;
-            /* Blue border on focus */
-            box-shadow: 0 0 5px rgba(0, 123, 255, 0.5);
-            /* Light blue shadow */
-            outline: none;
-            /* Remove default outline */
-        }
-
-        /* Optional: Style for placeholder text */
-        #search::placeholder {
-            color: #999;
-            /* Light grey color for placeholder text */
-            font-style: italic;
-            /* Italic style for placeholder text */
-        }
-
-        body {
-            font-family: 'Roboto', sans-serif;
-            /* Set the font for the body */
-        }
-
-        .navbar {
-            background-color: #333;
-            /* Dark background */
-            display: flex;
-            /* Enable flexbox layout */
-            justify-content: center;
-            /* Center the items horizontally */
-            padding: 15px 0;
-            /* Add vertical padding */
-        }
-
-        .navbar ul {
-            list-style-type: none;
-            /* Remove bullet points */
-            margin: 0;
-            /* Remove default margin */
-            padding: 0;
-            /* Remove default padding */
-            display: flex;
-            /* Enable flexbox layout for the list */
-        }
-
-        .navbar li {
-            margin: 0 20px;
-            /* Space out the list items */
-        }
-
-        .navbar li a {
-            color: white;
-            /* White text */
-            font-weight: bold;
-            /* Make the text bold */
-            text-align: center;
-            /* Centered text */
-            padding: 15px 20px;
-            /* Increased padding */
-            text-decoration: none;
-            /* Remove underline */
-            font-size: 18px;
-            /* Increase font size */
-        }
-
-        .navbar li a:hover {
-            background-color: #ddd;
-            /* Light background on hover */
-            color: black;
-            /* Black text on hover */
-        }
-    </style>
 </head>
 
 <body>
-    <!-- Navigation Bar -->
     <nav class="navbar">
         <ul>
             <li><a href="#home">Home</a></li>
-            <li><a href="/client_portal/client">Listings</a></li>
+            <li><a href="#" onclick="openCompanyModal()">Shop From</a></li>
+            <li><a href="/client_portal/client">Products</a></li>
             <li><a href="/client_portal/customers_orders">My Orders</a></li>
-            <li id="login-link" style="display: none;"><a href="/client_portal/access_portal/login#">Login</a></li>
-            <li id="logout-link" style="display: none;"><a href="/client_portal/access_portal/login#" onclick="logoutUser()">Logout</a>
 
-            <!-- <li><a href="#">Home</a></li>
-            <li><a href="#">Listings</a></li>
-            <li><a href="#">My Orders</a></li> -->
+            <!-- Shopping cart icon with item count badge -->
+            <li>
+                <a href="/client_portal/cart" class="cart-icon">
+                    <i class="fas fa-shopping-cart"></i>
+                    <span id="cart-count">0</span> <!-- Optional: Display item count -->
+                </a>
+            </li>
+            <li id="login-link" style="display: none;"><a href="/client_portal/access_portal/login#">Login</a></li>
+            <li id="logout-link" style="display: none;"><a href="/client_portal/access_portal/login#"
+                    onclick="logoutUser()">Logout</a></li>
+
+
         </ul>
     </nav>
-    <div class="container">
-        <h1>Real Estate Listings</h1>
-        <!-- Search Field -->
-        <input type="text" id="search" placeholder="Search for items..." oninput="searchItems()">
-
-        <div class="thumb-grid" id="item-list">
-            <!-- Items will be dynamically loaded here -->
+    <div id="companyModal" class="modal">
+        <div class="modal-content">
+            <span class="close" onclick="closeModal()">&times;</span>
+            <h2>Select a Company</h2>
+            <ul id="modal-company-list">
+                <!-- Buttons will be dynamically loaded here -->
+                <!-- Example of what JavaScript will add dynamically: -->
+                <!-- <li><button onclick="selectCompany('Company Name')">Company Name</button></li> -->
+            </ul>
         </div>
     </div>
 
+
+    <div class="container">
+        <div class="sidebar">
+            <h3>Shop From</h3>
+            <ul id="company-list">
+                <!-- Selected company will be displayed here -->
+            </ul>
+
+            <h2>Item Categories</h2>
+              <!-- Search Field for Item Categories -->
+        <input type="text" id="category-search" placeholder="Search categories..." oninput="searchCategories()">
+       
+            <ul id="item-groups-list">
+                <!-- Item groups will be dynamically loaded here -->
+            </ul>
+        </div>
+
+        <div class="main-content">
+            <h1>Product Listings</h1>
+            <!-- Selected Filters and Instructions Section -->
+            <div id="selected-filters">
+                <p id="filter-instructions">Please choose the Company to Shop from on the Nav Bar to view items.
+                </p>
+                <p><strong>Selected Item Category:</strong> <span id="selected-item-group">None</span></p>
+                <p><strong>Selected Company:</strong> <span id="selected-company-group">None</span></p>
+            </div>
+            <!-- Search Field -->
+            <input type="text" id="search" placeholder="Search for items..." oninput="searchItems()">
+
+            <div class="thumb-grid" id="item-list">
+                <!-- Items will be dynamically loaded here -->
+            </div>
+        </div>
+    </div>
+
+    <div id="loading-indicator" style="display: none;">
+        <p>Loading, please wait...</p>
+    </div>
+
     <script>
-        // Check if the user is logged in and toggle login/logout links accordingly
-        function checkLoginStatus() {
-            fetch('/api/method/frappe.auth.get_logged_user', {
-                method: 'GET',
-                credentials: 'include' // Important for sending cookies with the request
-            })
-                .then(response => response.json())
-                .then(data => {
-                    const loginLink = document.getElementById("login-link");
-                    const logoutLink = document.getElementById("logout-link");
 
-                    if (data.message) {
-                        // User is logged in
-                        loginLink.style.display = "none";
-                        logoutLink.style.display = "block";
-                    } else {
-                        // User is not logged in
-                        loginLink.style.display = "block";
-                        logoutLink.style.display = "none";
-                    }
-                })
-                .catch(error => {
-                    console.error("Error checking login status:", error);
-                    // Default to logged-out view if there’s an error
-                    document.getElementById("login-link").style.display = "block";
-                    document.getElementById("logout-link").style.display = "none";
-                });
-        }
-
-        // Log the user out
-        function logoutUser() {
-            fetch('/api/method/logout', {
-                method: 'GET',
-                credentials: 'include'
-            })
-                .then(() => {
-                    window.location.href = "/client_portal/access_portal/login#"; // Redirect to login page after logout
-                })
-                .catch(error => console.error("Error logging out:", error));
-        }
-
-        // Call the checkLoginStatus function on page load
-        document.addEventListener("DOMContentLoaded", () => {
-            checkLoginStatus();
-            fetchRealEstateItems(); // Fetch items on page load
-        });
-
-        // Fetch items with 'REAL ESTATE' item group from Frappe
-        async function fetchRealEstateItems(search = '') {
-            try {
-                const response = await fetch(`/api/method/customer_portal.custom_api.item_estates.get_real_estate_items?search=${search}`);
-                const data = await response.json();
-
-                if (data.message) {
-                    displayItems(data.message);
-                }
-            } catch (error) {
-                console.error('Error fetching items:', error);
-            }
-        }
-
-        // Search for items based on user input
-        function searchItems() {
-            const searchTerm = document.getElementById("search").value;
-            fetchRealEstateItems(searchTerm);
-        }
-
-        // Display fetched items in the UI
-        function displayItems(items) {
-            const itemList = document.getElementById("item-list");
-            itemList.innerHTML = ''; // Clear previous items
-
-            if (items.length === 0) {
-                itemList.innerHTML = '<p>No items found.</p>'; // Display message if no items are found
-                return;
-            }
-
-            // Create item cards and append them to the grid
-            items.forEach(item => {
-                const itemCard = document.createElement("div");
-                itemCard.className = "thumb-item";
-
-                itemCard.innerHTML = `
-                    <img src="${item.image || 'default-image.jpg'}" alt="${item.item_name}">
-                    <h3>${item.item_name}</h3>
-                    <p>${item.description || 'No description available.'}</p>
-                    <p class="price">$${item.price !== 'N/A' ? item.price : 'Price not available'}</p>
-                    <div class="button-container">
-                        <button onclick="viewItem('${item.item_code}')">View Details</button>
-                        <button onclick="addToCart('${item.item_code}')">Add to Cart</button>
-                    </div>
-                `;
-                itemList.appendChild(itemCard);
-            });
-        }
-
-        // Function to view item details (stub for future implementation)
-        function viewItem(itemCode) {
-            // Implement item detail view logic here
-            alert(`Viewing details for item: ${itemCode}`);
-        }
-
-        // Function to add an item to the cart (stub for future implementation)
-        function addToCart(itemCode) {
-            // Implement add to cart logic here
-            alert(`Added item to cart: ${itemCode}`);
-        }
     </script>
 
+    <script src="js/client.js"></script>
 </body>
 
 </html>

@@ -1,0 +1,196 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Item Groups</title>
+    <link rel="stylesheet" href="/assets/css/style.css"> <!-- Link to your CSS file -->
+    <style>
+        /* Basic styling for the card layout */
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f4f4f4;
+            margin: 0;
+            padding: 0;
+        }
+
+        .navbar {
+            background-color: #333;
+            color: #fff;
+            padding: 10px;
+        }
+
+        .navbar ul {
+            list-style: none;
+            padding: 0;
+        }
+
+        .navbar li {
+            display: inline;
+            margin-right: 20px;
+        }
+
+        .navbar a {
+            color: #fff;
+            text-decoration: none;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 20px auto;
+            padding: 20px;
+            background-color: #fff;
+            border-radius: 8px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+        }
+
+        h1 {
+            text-align: center;
+            margin-bottom: 20px;
+        }
+
+        .group-list {
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: center;
+            gap: 20px; /* Space between cards */
+        }
+
+        .item-group {
+            background: #4CAF50; /* Green background */
+            border: 1px solid #ddd;
+            border-radius: 8px;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+            width: 200px; /* Width of each card */
+            padding: 20px;
+            text-align: center;
+            transition: transform 0.3s, background-color 0.3s; /* Transition effects */
+            color: white; /* White text for better contrast */
+            cursor: pointer; /* Pointer cursor on hover */
+        }
+
+        .item-group:hover {
+            transform: translateY(-5px); /* Lift effect on hover */
+            background-color: #45a049; /* Darker green on hover */
+        }
+
+        .item-group h3 {
+            margin: 10px 0;
+            font-size: 1.2em;
+        }
+
+        .item-list {
+            margin-top: 20px;
+            display: none; /* Initially hidden */
+        }
+
+        .item-list h2 {
+            text-align: center;
+        }
+    </style>
+</head>
+<body>
+    <nav class="navbar">
+        <ul>
+            <li><a href="#home">Home</a></li>
+            <li><a href="/client_portal/client">Listings</a></li>
+            <li><a href="/client_portal/customers_orders">My Orders</a></li>
+            <li id="login-link" style="display: none;"><a href="/client_portal/access_portal/login#">Login</a></li>
+            <li id="logout-link" style="display: none;"><a href="/client_portal/access_portal/login#" onclick="logoutUser()">Logout</a></li>
+        </ul>
+    </nav>
+    
+    <div class="container">
+        <h1>Item Groups</h1>
+        <div class="group-list" id="item-group-list">
+            <!-- Item groups will be dynamically loaded here -->
+        </div>
+        <div class="item-list" id="item-list">
+            <!-- Items under selected group will be displayed here -->
+        </div>
+    </div>
+
+    <script>
+        // Fetch item groups on page load
+        async function fetchItemGroups() {
+            try {
+                const response = await fetch('/api/method/customer_portal.custom_api.item_estates.get_item_groups');
+                const data = await response.json();
+                
+                if (data.message) {
+                    displayItemGroups(data.message);
+                }
+            } catch (error) {
+                console.error('Error fetching item groups:', error);
+            }
+        }
+
+        // Display item groups in card format
+        function displayItemGroups(groups) {
+            const itemGroupList = document.getElementById("item-group-list");
+            itemGroupList.innerHTML = ''; // Clear previous groups
+
+            if (groups.length === 0) {
+                itemGroupList.innerHTML = '<p>No item groups found.</p>'; // Display message if no groups are found
+                return;
+            }
+
+            // Create card for each item group
+            groups.forEach(group => {
+                const groupItem = document.createElement("div");
+                groupItem.className = "item-group";
+                groupItem.innerHTML = `
+                    <h3>${group.name}</h3>
+                `;
+                groupItem.onclick = () => fetchItemsByGroup(group.name); // Fetch items on click
+                itemGroupList.appendChild(groupItem);
+            });
+        }
+
+        // Fetch items by group name
+        async function fetchItemsByGroup(groupName) {
+            try {
+                const response = await fetch(`/api/method/customer_portal.custom_api.item_estates.get_real_estate_items?group_name=${groupName}`);
+                const data = await response.json();
+
+                if (data.message) {
+                    displayItems(data.message, groupName);
+                }
+            } catch (error) {
+                console.error('Error fetching items:', error);
+            }
+        }
+
+        // Display items under the selected group
+        function displayItems(items, groupName) {
+            const itemList = document.getElementById("item-list");
+            itemList.innerHTML = ''; // Clear previous items
+            itemList.style.display = 'block'; // Show the item list
+
+            const title = document.createElement('h2');
+            title.innerText = `Items under ${groupName}`;
+            itemList.appendChild(title);
+
+            if (items.length === 0) {
+                itemList.innerHTML += '<p>No items found in this group.</p>'; // Display message if no items are found
+                return;
+            }
+
+            // Create item display
+            items.forEach(item => {
+                const itemDiv = document.createElement("div");
+                itemDiv.className = "item";
+                itemDiv.innerHTML = `
+                    <p>${item.item_name}</p>
+                    <p>${item.description || 'No description available.'}</p>
+                    <p class="price">$${item.price !== 'N/A' ? item.price : 'Price not available'}</p>
+                `;
+                itemList.appendChild(itemDiv);
+            });
+        }
+
+        // Call the fetchItemGroups function on page load
+        document.addEventListener("DOMContentLoaded", fetchItemGroups);
+    </script>
+</body>
+</html>

@@ -17,8 +17,10 @@ def get_customer_sales_orders():
 
     # Fetch sales orders for the customer
     sales_orders = frappe.get_all('Sales Order', 
-                                  filters={'customer': customer_name}, 
-                                  fields=['name', 'transaction_date', 'grand_total', 'status', 'payment_terms_template'])
+                                  filters={'customer': customer_name,
+                                           'status': ['!=', 'Cancelled']  # Exclude orders with status "Cancelled"
+                                           }, 
+                                  fields=['name', 'transaction_date', 'grand_total', 'status', 'payment_terms_template','advance_paid'])
 
     # Retrieve items and payment schedules for each sales order
     for order in sales_orders:
