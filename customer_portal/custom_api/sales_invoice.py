@@ -11,8 +11,9 @@ def enqueue_penalty_update(doc=None,method=None):
         timeout=300,
         job_name="Update Penalty and Create Invoice for Overdue Schedules"
     )
+from frappe import flags
 
-def update_penalty_and_create_invoice(doc=None,method=None):
+def update_penalty_and_create_invoice(doc=None, method=None):
     try:
         frappe.logger().info("Running overdue penalty update job...")
         today_date = datetime.today().date()
@@ -66,12 +67,14 @@ def update_penalty_and_create_invoice(doc=None,method=None):
                     row.custom_penality_amount = 0
                     row.custom_payment_amount_penality = flt(row.payment_amount)
 
-            if changes_made:
-                so_doc.save()
+            if changes_made and not flags.in_recursion:
+                flags.in_recursion = True  # Flag to prevent recursion
+                so_doc.save()  # Save only once after all changes are made
+                flags.in_recursion = False  # Reset the flag
 
     except Exception as e:
         frappe.log_error(frappe.get_traceback(), "Error in update_penalty_and_create_invoice")
-        frappe.throw(f"An error occurred while updating penalty fields and creating Sales Invoices: {str(e)}. Please check the error log.")
+        frappe.throw(f"An error occurred while updating penalty fields and creating Sales Invoices: {str(e)}.")
 
 def create_penalty_sales_invoice(customer, sales_order, penalty_amount, company, cost_center, location, branch, posting_date):
     try:
