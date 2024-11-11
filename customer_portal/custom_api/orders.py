@@ -104,3 +104,183 @@ def get_customer_delivery_notes():
    
 
     return {'sales_invoice': sales_invoice}
+
+
+@frappe.whitelist()
+def get_customer_balance_from_gl():
+    # Get the currently logged-in user
+    customer_email = frappe.session.user
+
+    # Fetch customer record using the logged-in user's email
+    customer = frappe.get_all('Customer', filters={'custom_link_user_email': customer_email}, fields=['name','customer_name'])
+    
+    
+    # Check if a customer was found for the email
+    if not customer:
+        return {"error": "No customer found for the logged-in user."}
+    
+    customer_name = customer[0].name
+    customer_full_name = customer[0].customer_name
+    # Abbreviate customer_name (taking first letter of each word)
+    customer_abbreviation = ''.join([word[0].upper() for word in customer_full_name.split()])
+
+    
+
+    # Fetch total credits and account currency for the customer
+    credit_result = frappe.db.sql("""
+        SELECT SUM(credit), account_currency
+        FROM `tabGL Entry`
+        WHERE party_type = 'Customer'
+        AND party = %s
+        AND docstatus = 1
+        GROUP BY account_currency
+    """, (customer_name,))
+    
+    # Extract total credit and currency
+    total_credit = credit_result[0][0] if credit_result else 0
+    account_currency = credit_result[0][1] if credit_result else "NGN"  # Default to "USD" if currency is not available
+
+    # Fetch total debits for the customer in the same currency
+    total_debit = frappe.db.sql("""
+        SELECT SUM(debit)
+        FROM `tabGL Entry`
+        WHERE party_type = 'Customer'
+        AND party = %s
+        AND account_currency = %s
+        AND docstatus = 1
+    """, (customer_name, account_currency))[0][0] or 0
+
+    # Calculate available credits and balance payable
+    available_credits = total_credit
+    balance_payable = total_debit - total_credit
+
+    # Return the summary as a dictionary
+    return {
+        "Email":customer_email,
+        "Customer": customer_full_name,
+        "Account Currency": account_currency,
+        "Available Credits": available_credits,
+        "Balance Payable": balance_payable,
+        "Abr": customer_abbreviation
+    }
+
+
+@frappe.whitelist()
+def get_last_payment():
+    # Get the currently logged-in user
+    customer_email = frappe.session.user
+
+    # Fetch customer record using the logged-in user's email (assuming 'custom_link_user_email' is the correct field)
+    customer = frappe.get_all('Customer', filters={'custom_link_user_email': customer_email}, fields=['name','customer_name'])
+    
+    if not customer:
+        return {"message": "No customer record found for the logged-in user."}
+
+    # Get the customer name from the fetched customer record
+    customer_name = customer[0].get('name')
+
+    # Query for the most recent Payment Entry for the logged-in customer
+    last_payment = frappe.db.sql("""
+        SELECT 
+            pe.name,
+            pe.posting_date,
+            pe.total_allocated_amount,
+            pe.unallocated_amount
+        FROM
+            `tabPayment Entry` pe
+        WHERE
+            pe.docstatus = 1  -- 1 means the document is submitted
+            AND pe.party = %s  -- Filter payments for the logged-in customer
+        ORDER BY
+            pe.posting_date DESC
+        LIMIT 1
+    """, (customer_name,), as_dict=True)
+
+    # Query for the count of payments made by the customer
+    payment_count = frappe.db.sql("""
+        SELECT COUNT(*) AS count
+        FROM `tabPayment Entry`
+        WHERE docstatus = 1
+        AND party = %s
+    """, (customer_name,), as_dict=True)
+
+    if last_payment:
+        # Get the related GL Entries for the last payment (optional, as per your need)
+        gl_entries = frappe.db.sql("""
+            SELECT
+                account, debit, credit
+            FROM
+                `tabGL Entry`
+            WHERE
+                voucher_type = 'Payment Entry' 
+                AND voucher_no = %s
+        """, (last_payment[0].name), as_dict=True)
+
+        # If there are GL Entries, you can process them as needed (here we just count the payments made)
+        payments_made = payment_count[0].get('count')  # Get the count of all payments made
+
+        return {
+            "Total Amount": last_payment[0].total_allocated_amount,  # The total allocated amount
+            "Balance Payable": last_payment[0].unallocated_amount,  # The unallocated amount
+            "Paid On": last_payment[0].posting_date,  # The date of the last payment
+            "Payments": payments_made  # The number of payments made so far
+        }
+    else:
+        return {
+            "message": "No payments found for the customer"
+        }
+
+
+import frappe
+from frappe.utils import get_url
+
+@frappe.whitelist()
+def get_shared_documents():
+    # Get the currently logged-in user email
+    customer_email = frappe.session.user
+
+    # Query the "File" doctype for all files that are shared and associated with the logged-in user
+    files = frappe.get_all(
+        'File',
+        filters={'custom_user_id': customer_email},
+        fields=['name', 'file_name', 'file_url', 'file_type']
+    )
+
+    # Prepare the response with file details (URL, name, and type)
+    file_data = []
+    for file in files:
+        # Ensure to build the full URL for downloading
+        file_data.append({
+            "file_name": file['file_name'],
+            "file_type": file['file_type'],
+            "file_url": get_url(file['file_url'])  # Build the full URL for the file
+        })
+
+    # Return the file data
+    return {"message": file_data}
+
+import frappe
+from frappe.utils.file_manager import save_file
+
+@frappe.whitelist(allow_guest=True)
+def upload_document():
+    user = frappe.session.user
+    filedata = frappe.request.files['file']
+    
+    if not filedata:
+        return {'message': 'No file uploaded'}
+
+    # Save the file to ERPNext using save_file method
+    file_doc = frappe.get_doc({
+        "doctype": "File",
+        "file_name": filedata.filename,
+        "file_url": None,
+        'custom_user_id':user,
+        "is_private": 0,  # 0 for public, 1 for private
+        "content": filedata.read()
+    })
+    
+    file_doc.save()
+
+    return {'message': 'Success'}
+

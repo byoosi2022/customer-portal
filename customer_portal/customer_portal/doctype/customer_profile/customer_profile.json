@@ -1,0 +1,187 @@
+{
+ "actions": [],
+ "allow_rename": 1,
+ "autoname": "naming_series:",
+ "creation": "2024-11-10 17:49:46.999105",
+ "default_view": "List",
+ "doctype": "DocType",
+ "editable_grid": 1,
+ "engine": "InnoDB",
+ "field_order": [
+  "naming_series",
+  "image",
+  "salute",
+  "first_name",
+  "user_id",
+  "column_break_dysvm",
+  "last_name",
+  "campany_name",
+  "mobile",
+  "phone",
+  "billing_address_section",
+  "street_1_ba",
+  "street_2_ba",
+  "city_ba",
+  "country_ba",
+  "state_ba",
+  "zip_ba",
+  "shipping_address_section",
+  "street_1_sa",
+  "street_2_sa",
+  "city_sa",
+  "state_sa",
+  "country_sa",
+  "zip_sa"
+ ],
+ "fields": [
+  {
+   "fieldname": "salute",
+   "fieldtype": "Link",
+   "label": "Salute",
+   "options": "Salutation"
+  },
+  {
+   "fieldname": "first_name",
+   "fieldtype": "Data",
+   "label": "First Name"
+  },
+  {
+   "fieldname": "last_name",
+   "fieldtype": "Data",
+   "label": "Last Name"
+  },
+  {
+   "fieldname": "campany_name",
+   "fieldtype": "Data",
+   "label": "Campany Name"
+  },
+  {
+   "fieldname": "mobile",
+   "fieldtype": "Data",
+   "label": "Mobile"
+  },
+  {
+   "fieldname": "phone",
+   "fieldtype": "Data",
+   "label": "Phone"
+  },
+  {
+   "fieldname": "shipping_address_section",
+   "fieldtype": "Section Break",
+   "label": "Shipping Address"
+  },
+  {
+   "fieldname": "zip_sa",
+   "fieldtype": "Data",
+   "label": "Zip"
+  },
+  {
+   "fieldname": "street_1_sa",
+   "fieldtype": "Data",
+   "label": "Street 1"
+  },
+  {
+   "fieldname": "street_2_sa",
+   "fieldtype": "Data",
+   "label": "Street 2"
+  },
+  {
+   "fieldname": "city_sa",
+   "fieldtype": "Data",
+   "label": "City"
+  },
+  {
+   "fieldname": "state_sa",
+   "fieldtype": "Data",
+   "label": "State SA"
+  },
+  {
+   "fieldname": "country_sa",
+   "fieldtype": "Link",
+   "label": "Country",
+   "options": "Country"
+  },
+  {
+   "fieldname": "billing_address_section",
+   "fieldtype": "Section Break",
+   "label": "Billing Address"
+  },
+  {
+   "fieldname": "street_1_ba",
+   "fieldtype": "Data",
+   "label": "Street 1 BA"
+  },
+  {
+   "fieldname": "street_2_ba",
+   "fieldtype": "Data",
+   "label": "Street 2 BA"
+  },
+  {
+   "fieldname": "city_ba",
+   "fieldtype": "Data",
+   "label": "City BA"
+  },
+  {
+   "fieldname": "country_ba",
+   "fieldtype": "Link",
+   "label": "Country BA",
+   "options": "Country"
+  },
+  {
+   "fieldname": "state_ba",
+   "fieldtype": "Data",
+   "label": "State BA"
+  },
+  {
+   "fieldname": "zip_ba",
+   "fieldtype": "Data",
+   "label": "Zip BA"
+  },
+  {
+   "fieldname": "naming_series",
+   "fieldtype": "Select",
+   "label": "Naming Series",
+   "options": "CP-CP-.YYYY.-"
+  },
+  {
+   "fieldname": "image",
+   "fieldtype": "Attach Image",
+   "label": "Image"
+  },
+  {
+   "fieldname": "column_break_dysvm",
+   "fieldtype": "Column Break"
+  },
+  {
+   "fieldname": "user_id",
+   "fieldtype": "Link",
+   "label": "User ID",
+   "options": "User"
+  }
+ ],
+ "index_web_pages_for_search": 1,
+ "links": [],
+ "modified": "2024-11-10 22:38:08.259259",
+ "modified_by": "Administrator",
+ "module": "Customer Portal",
+ "name": "Customer Profile",
+ "naming_rule": "By \"Naming Series\" field",
+ "owner": "Administrator",
+ "permissions": [
+  {
+   "create": 1,
+   "delete": 1,
+   "email": 1,
+   "export": 1,
+   "print": 1,
+   "read": 1,
+   "report": 1,
+   "role": "System Manager",
+   "share": 1,
+   "write": 1
+  }
+ ],
+ "sort_field": "modified",
+ "sort_order": "DESC",
+ "states": []
+}

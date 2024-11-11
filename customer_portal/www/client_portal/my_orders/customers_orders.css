@@ -1,0 +1,321 @@
+/* Global Reset */
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+}
+
+/* Body and overall page styles */
+body {
+    background-color: #ecf0f3;
+    overflow-x: hidden;
+    display: flex;
+    min-height: 100vh;
+    transition: margin-left 0.3s ease;
+}
+
+/* Sidebar - Initially open */
+.sidebar {
+    height: 100%;
+    width: 270px;
+    position: fixed;
+    top: 0;
+    left: 0;
+    background-color: #34495e;
+    color: #ecf0f1;
+    padding-top: 40px;
+    transition: transform 0.5s ease-in-out, opacity 0.5s ease-in-out;
+    box-shadow: 2px 0 10px rgba(0, 0, 0, 0.1);
+    z-index: 100;
+    overflow-y: auto; /* Enables vertical scrolling */
+}
+
+/* Show sidebar when toggled */
+.sidebar.open {
+    left: 0;
+}
+
+/* Sidebar closed - hides completely */
+.sidebar.closed {
+    transform: translateX(-100%);
+    opacity: 0;
+    pointer-events: none;
+}
+
+/* Sidebar Menu */
+.sidebar ul {
+    list-style: none;
+    padding: 0;
+}
+
+.sidebar ul li {
+    margin: 20px 0;
+}
+
+.sidebar ul li a {
+    color: #ecf0f1;
+    text-decoration: none;
+    font-size: 18px;
+    padding: 10px 25px;
+    display: block;
+    position: relative;
+    border-radius: 5px;
+    transition: 0.3s ease-in-out;
+}
+
+.sidebar ul li a::before {
+    content: '';
+    position: absolute;
+    height: 4px;
+    width: 0%;
+    background-color: #1abc9c;
+    left: 0;
+    bottom: 0;
+    transition: width 0.3s;
+}
+
+.sidebar ul li a:hover {
+    background-color: #1abc9c;
+    padding-left: 35px;
+}
+
+.sidebar ul li a:hover::before {
+    width: 100%;
+}
+
+/* Profile Info Section */
+.profile-info {
+    display: flex;
+    align-items: center;
+    padding: 2px;
+    background-color: #2c3e50;
+    color: white;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    position: relative;
+    border-radius: 5px;
+    margin-bottom: 20px;
+}
+
+.profile-info:hover {
+    background-color: #16a085;
+}
+
+.profile-mini {
+    background-color: #1abc9c;
+    color: white;
+    width: 45px;
+    height: 45px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin-right: 15px;
+    font-size: 22px;
+    font-weight: bold;
+    transition: transform 0.3s ease;
+}
+
+.profile-info:hover .profile-mini {
+    transform: rotate(360deg);
+}
+
+.profile-details {
+    flex: 1;
+}
+
+.profile-details div {
+    font-weight: bold;
+    font-size: 16px;
+}
+
+.profile-details small {
+    font-size: 12px;
+    color: #bdc3c7;
+}
+
+/* Profile Dropdown */
+.popover-wrapper {
+    display: none;
+    position: absolute;
+    top: 100%;
+    right: 0;
+    background-color: #a9bebe;
+    width: 200px;
+    border-radius: 5px;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+    z-index: 200;
+}
+
+.popover-body {
+    padding: 10px;
+}
+
+.popover-body button {
+    width: 100%;
+    padding: 12px;
+    background-color: #16a085;
+    border: none;
+    color: white;
+    cursor: pointer;
+    font-size: 14px;
+    text-align: left;
+    border-radius: 5px;
+    transition: background-color 0.3s;
+}
+
+.popover-body button:hover {
+    background-color: #1abc9c;
+}
+
+.logout-section {
+    margin-top: 10px;
+}
+
+.logout-section a {
+    text-decoration: none;
+    color: #e74c3c;
+    font-size: 14px;
+    display: block;
+    padding: 10px 0;
+}
+
+/* Hamburger Button */
+.hamburger {
+    background-color: transparent;
+    color: #ecf0f1;
+    border: 2px solid #ecf0f1;
+    padding: 15px;
+    font-size: 30px;
+    cursor: pointer;
+    position: absolute;
+    top: 25px;
+    left: 25px;
+    z-index: 2000;  /* Higher z-index to be on top of the footer */
+    border-radius: 50%;
+    transition: all 0.3s ease;
+}
+
+.hamburger:hover {
+    background-color: #16a085;
+    border-color: #16a085;
+}
+
+/* Main Content Area */
+.content {
+    margin-left: 270px; /* Initial space for sidebar */
+    padding: 20px;
+    transition: margin-left 0.5s ease-in-out;
+    width: calc(100% - 270px); /* Adjust width to avoid overlap */
+}
+
+/* Full-width content when sidebar is closed */
+.content.full-width {
+    margin-left: 0;
+    width: 100%;
+}
+
+.content h1 {
+    font-size: 2rem;
+    color: #34495e;
+    margin-bottom: 20px;
+}
+
+.content p {
+    font-size: 1rem;
+    color: #7f8c8d;
+}
+
+/* Footer styles with fade-in/out effect */
+.footer {
+    display: grid;
+    grid-template-columns: repeat(5, 1fr);  /* 5 equal columns */
+    gap: 20px;  /* Adjust the gap between the columns */
+    background-color: #333;
+    color: #fff;
+    padding: 20px 30px; /* Added padding for better spacing */
+    width: 100%;
+    font-size: 0.9em;
+    opacity: 0;  /* Initially, the footer is fully visible */
+    transition: opacity 0.5s ease;  /* Fade-in and fade-out transition */
+    position: fixed;  /* Keep the footer fixed at the bottom */
+    bottom: 0;  /* Place at the bottom of the screen */
+    left: 0;
+    z-index: 1;  /* Lower z-index to place it behind the toggle button */
+}
+
+/* Individual column styling */
+.footer-column {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;  /* Increased space between elements within the column */
+}
+
+.footer-column h5 {
+    font-size: 1em;
+    margin-bottom: 8px;
+    color: #ffdd57;
+}
+
+.footer-column p, .footer-column a {
+    font-size: 0.85em;
+    color: #ccc;
+    text-decoration: none;
+    line-height: 1.5;
+}
+
+.footer-column a:hover {
+    color: #fff;
+    text-decoration: underline;
+}
+
+/* Support button styling */
+.footer .btn {
+    background-color: #ffdd57;
+    color: #333;
+    border: none;
+    padding: 6px 12px;
+    margin-top: 8px;
+    border-radius: 3px;
+    font-size: 0.9em;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+}
+
+.footer .btn:hover {
+    background-color: #ffd633;
+}
+
+/* Responsive Design for smaller screens */
+@media (max-width: 768px) {
+    .footer {
+        grid-template-columns: 1fr 1fr;  /* Stack columns in two rows for smaller screens */
+        text-align: center;
+        padding: 12px 20px;
+    }
+}
+
+/* Toggle button styling */
+.toggle-btn {
+    position: fixed;  /* Fixed position on the page */
+    top: 20px;  /* Adjust as needed */
+    right: 20px;  /* Adjust as needed */
+    z-index: 10;  /* Higher z-index to make sure it stays in front of the footer */
+    background-color: #ffdd57;
+    color: #333;
+    border: none;
+    padding: 10px 20px;
+    border-radius: 5px;
+    font-size: 1em;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+}
+
+.toggle-btn:hover {
+    background-color: #ffd633;
+}
+
+
+/* cardddddss */
+

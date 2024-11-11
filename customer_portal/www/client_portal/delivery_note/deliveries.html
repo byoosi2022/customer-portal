@@ -1,0 +1,132 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>My Delivery Note</title>
+    <link rel="stylesheet" href="customers_orders.css">
+    <link rel="stylesheet" href="../Sales_invoice/invoice.css">
+</head>
+
+<body>
+
+    <!-- Hamburger Button (always visible, separated) -->
+    <button class="hamburger" onclick="toggleSidebar()">☰ MACL</button>
+
+    <!-- Sidebar -->
+    <div class="sidebar" id="sidebar">
+        <br><br><br><br><br>
+
+        <!-- Profile Info Section -->
+        <div class="profile-info" onclick="toggleProfileMenu()">
+            <div class="profile-mini" id="abbr"></div>
+            <div class="profile-details">
+                <div id="customer-name"></div>
+                <small id="email"></small>
+            </div>
+            <!-- Profile Dropdown -->
+            <div class="popover-wrapper" id="profileDropdown">
+                <div class="popover-body">
+                    <button class="change-password action-button" type="button">
+                        <span>Change Password</span>
+                    </button>
+                    <div class="logout-section">
+                        <ul>
+                            <li class="logout-section" id="login-link" style="display: none;"><a href="/client_portal/access_portal/login">Login</a></li>
+                            <li class="logout-section" id="logout-link" style="display: none;"><a href="/client_portal/access_portal/login"
+                                    onclick="logoutUser()">Logout</a></li>
+                        </ul>
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Sidebar Menu -->
+        <ul>
+            <li><a href="/client_portal/menu/home_page">Home</a></li>
+            <li><a href="/client_portal/my_orders/orders">My Orders</a></li>
+            <li><a href="/client_portal/Sales_invoice/invoices">Sales Invoice</a></li>
+            <li><a href="/client_portal/delivery_note/deliveries">Delivery Note</a></li>
+            <li><a href="/client_portal/my_cart/cart">My Cart</a></li>
+            <li><a href="/client_portal/client">Products</a></li>
+            <li><a href="client.html">Statement</a></li>
+            <!-- <li id="login-link" style="display: none;"><a href="/login#login">Login</a></li> -->
+            <!-- <li id="logout-link" style="display: none;"><a href="/login#login" onclick="logoutUser()">Logout</a></li> -->
+        </ul>
+    </div>
+
+    <!-- Main Content Area -->
+    <div class="content" id="content">
+        <h1>Welcome to My Delivery Note</h1>
+        <table class="cart-table">
+            <thead>
+                <tr>
+                    <th>Item</th>
+                    <th>ID</th>
+                    <th>Date</th>
+                    <th>Status</th>
+                    <th>Amount</th>
+                </tr>
+            </thead>
+            <tbody id="invoice-items">
+                <!-- Orders will be dynamically loaded here -->
+            </tbody>
+        </table>
+
+    </div>
+
+
+    <!-- Footer Section -->
+    <div class="footer">
+        <!-- Column 1: Company Information -->
+        <div class="footer-column">
+            <h5>Company</h5>
+            <p>METRO AND CASTLE LIMITED</p>
+            <p>www.metroandcastle.com</p>
+        </div>
+
+        <!-- Column 2: Support Links -->
+        <div class="footer-column">
+            <h5>Support</h5>
+            <a href="mailto:support@metroplexenergies.com">Email Support</a>
+            <a href="sms:+2348001234567">SMS Support</a>
+            <button class="btn">Contact Support</button>
+        </div>
+
+        <!-- Column 3: Quick Links -->
+        <div class="footer-column">
+            <h5>Quick Links</h5>
+            <a href="/about">About Us</a>
+            <a href="/faq">FAQ</a>
+            <a href="/terms">Terms & Conditions</a>
+            <a href="/privacy">Privacy Policy</a>
+        </div>
+
+        <!-- Column 4: Address 1 -->
+        <div class="footer-column">
+            <h5>Address 1</h5>
+            <p>METRO MALL,</p>
+            <p>ATLANTIC LAYOUT ESTATES,</p>
+            <p>LEKKI GARDEN PHASE 4 ROAD,</p>
+            <p>GENERAL PAINT B/STOP,</p>
+        </div>
+
+        <!-- Column 5: Address 2 -->
+        <div class="footer-column">
+            <h5>Address 2</h5>
+            <p>LEKKI EXPRESSWAY, LAGOS.</p>
+            <p>PHONE: 09154793665, 08097814209</p>
+            <p>Info@metroandcastle.com</p>
+        </div>
+    </div>
+
+
+    <script src="customers_orders.js"></script>
+    <script src="deliveries.js"></script>
+    <script src="../utils.js"></script>
+
+</body>
+
+</html>

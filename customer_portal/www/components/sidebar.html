@@ -1,0 +1,22 @@
+<!-- sidebar.html -->
+<div class="sidebar" id="sidebar">
+    <button class="hamburger" onclick="toggleSidebar()">☰ Menu</button>
+    
+    <div class="profile-info" onclick="toggleProfileMenu()">
+        <div class="profile-mini">OE</div>
+        <div class="profile-details">
+            <div>Overcomer Egigba</div>
+            <small>overcomer.e@metroandcastle.com.ng</small>
+        </div>
+        {% include "profile_menu.html" %}
+    </div>
+
+    <ul>
+        <li><a href="client.html">Home</a></li>
+        <li><a href="customers_orders.html">My Orders</a></li>
+        <li><a href="sales_invoice_portal.html">Sales Invoice</a></li>
+        <li><a href="delivery_note_portal.html">Delivery Note</a></li>
+        <li><a href="/client_portal/cart">My Cart</a></li>
+        <li><a href="client.html">Products</a></li>
+    </ul>
+</div>
