@@ -6,18 +6,22 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Drawer Navigation Bar</title>
     <link rel="stylesheet" href="customers_orders.css">
-    <link rel="stylesheet" href="rating_review.css">
+    <link rel="stylesheet" href="rating_review.css"> 
+    <link rel="stylesheet" href="send_email.css">
+    <link rel="stylesheet" href="/assets/customer_portal/css/logo_company.css">
 </head>
 
 <body>
 
-    <!-- Hamburger Button (always visible, separated) -->
-    <button class="hamburger" onclick="toggleSidebar()">☰ MACL</button>
+    <button class="hamburger" onclick="toggleSidebar()">
+           ☰ MACL 
+        
+      </button>
 
     <!-- Sidebar -->
     <div class="sidebar" id="sidebar">
         <br><br><br><br><br>
-
+      
         <!-- Profile Info Section -->
         <div class="profile-info" onclick="toggleProfileMenu()">
             <div class="profile-mini" id="abbr"></div>
@@ -33,9 +37,10 @@
                     </button>
                     <div class="logout-section">
                         <ul>
-                            <li class="logout-section" id="login-link" style="display: none;"><a href="/client_portal/access_portal/login">Login</a></li>
-                            <li class="logout-section" id="logout-link" style="display: none;"><a href="/client_portal/access_portal/login"
-                                    onclick="logoutUser()">Logout</a></li>
+                            <li class="logout-section" id="login-link" style="display: none;"><a
+                                    href="/client_portal/access_portal/login">Login</a></li>
+                            <li class="logout-section" id="logout-link" style="display: none;"><a
+                                    href="/client_portal/access_portal/login" onclick="logoutUser()">Logout</a></li>
                         </ul>
                     </div>
                 </div>
@@ -48,15 +53,28 @@
             <li><a href="/client_portal/my_orders/orders">My Orders</a></li>
             <li><a href="/client_portal/Sales_invoice/invoices">Sales Invoice</a></li>
             <li><a href="/client_portal/delivery_note/deliveries">Delivery Note</a></li>
-            <li><a href="/client_portal/my_cart/cart">My Cart</a></li>
-            <li><a href="/client_portal/client">Statement</a></li>
-            <li id="login-link" style="display: none;"><a href="/login#login">Login</a></li>
-            <li id="logout-link" style="display: none;"><a href="/login#login" onclick="logoutUser()">Logout</a></li>
+            <!-- <li><a href="/client_portal/my_cart/cart">My Cart</a></li> -->
+            <li><a href="/client_portal/quotes/quotes">Quotes</a></li>
+            <li><a href="/client_portal/payment_entry/payment_entry">Payment Made</a></li>
+            <li><a href="/client_portal/statement/statement">Statement</a></li>
         </ul>
     </div>
 
     <!-- Main Content Area -->
     <div class="content" id="content">
+            <!-- Company Header with Logo -->
+    <div class="company-header">
+        <img src="/assets/customer_portal/images/MACL.jpg" alt="Company Logo" class="company-logo" id="logo">
+        <div class="company-info">
+            <center><h2>METRO AND CASTLE LIMITED</h2>
+            <p>METRO MALL, ATLANTIC LAYOUT ESTATES,</p>
+            <p>LEKKI GARDEN PHASE 4 ROAD, GENERAL PAINT B/STOP,</p>
+            <p>LEKKI EXPRESSWAY, LAGOS.</p>
+            <p>PHONE: 09154793665, 08097814209</p>
+            <p>Info@metroandcastle.com www.metroandcastle.com</p></center>
+     
+        </div>
+    </div>
         <h1 id="title-name"></h1>
         <p>Here you can view all your orders, manage deliveries, invoices, and more.</p>
 
@@ -72,46 +90,46 @@
                 <button class="btn view-more-btn" id="route-to-profile" onclick="routeToProfile()">View More</button>
             </div>
 
-<!-- Reviews Card -->
-<div class="review-card">
-    <h2>We Value Your Feedback!</h2>
-    <p>Like our service or have any suggestions for us? We'd love to hear from you!</p>
-    <button class="btn review-btn" id="reviewBtn">Leave a Review</button>
-</div>
+            <!-- Reviews Card -->
+            <div class="review-card">
+                <h2>We Value Your Feedback!</h2>
+                <p>Like our service or have any suggestions for us? We'd love to hear from you!</p>
+                <button class="btn review-btn" id="reviewBtn">Leave a Review</button>
+            </div>
 
-<!-- Modal -->
-<div class="modal" id="reviewModal">
-    <div class="modal-content">
-        <div class="modal-header">
-            <h3>How would you rate our service?</h3>
-            <button class="close-btn" id="closeModal">&times;</button>
-        </div>
-        <div class="modal-body">
-            <div class="rating-container">
-                <div class="stars">
-                    <span class="star" data-value="1">★</span>
-                    <span class="star" data-value="2">★</span>
-                    <span class="star" data-value="3">★</span>
-                    <span class="star" data-value="4">★</span>
-                    <span class="star" data-value="5">★</span>
-                </div>
-                <div class="rating-display">
-                    <p id="ratingText">0 out of 5</p>
+            <!-- Modal -->
+            <div class="modal" id="reviewModal">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h3>How would you rate our service?</h3>
+                        <button class="close-btn" id="closeModal">&times;</button>
+                    </div>
+                    <div class="modal-body">
+                        <div class="rating-container">
+                            <div class="stars">
+                                <span class="star" data-value="1">★</span>
+                                <span class="star" data-value="2">★</span>
+                                <span class="star" data-value="3">★</span>
+                                <span class="star" data-value="4">★</span>
+                                <span class="star" data-value="5">★</span>
+                            </div>
+                            <div class="rating-display">
+                                <p id="ratingText">0 out of 5</p>
+                            </div>
+                        </div>
+                        <textarea id="comment" placeholder="Tell us more about what you think..." rows="5"></textarea>
+                    </div>
+                    <div class="modal-footer">
+                        <button id="submitReview" class="btn submit-btn">Submit Review</button>
+                    </div>
                 </div>
             </div>
-            <textarea id="comment" placeholder="Tell us more about what you think..." rows="5"></textarea>
-        </div>
-        <div class="modal-footer">
-            <button id="submitReview" class="btn submit-btn">Submit Review</button>
-        </div>
-    </div>
-</div>
 
 
             <!-- Shared Documents Card -->
             <div class="card" id="shared-documents-card">
                 <h2>Shared Documents</h2>
-                <p>Documents that are shared between you and IMEL will appear here.</p>
+                <p>Documents that are shared between you and MACL will appear here.</p>
                 <div id="documents-list">Loading...</div> <!-- Placeholder for dynamically loading shared documents -->
                 <button class="btn upload-btn" id="upload-document-btn">Upload Document</button>
 
@@ -145,6 +163,48 @@
                 <p><strong>Payments:</strong> <span id="payments-count">Loading...</span></p>
             </div>
 
+    <!-- Send Mail Card -->
+<div class="sendEmail-card">
+   <div class="card-content">
+      <!-- Other content of the card can go here -->
+   </div>
+   
+   <!-- Button Container for positioning -->
+   <div class="button-container">
+      <button class="btn review-btn" id="sendEmailBtn">Send Email</button>
+   </div>
+</div>
+
+<!-- Modal (same as before) -->
+<div class="modal-dialog modal-md" id="emailModal" style="display: none;">
+   <div class="modal-content">
+      <div class="modal-header">
+         <h4 class="modal-title">Mail To</h4>
+         <button class="close" type="button" id="closeModalBtn">×</button>
+      </div>
+      <form id="sendEmailForm">
+         <div class="modal-body">
+            <div id="errorAlert" class="form-alert-error" style="display: none;">Error sending email</div>
+            <div class="form-group">
+               <label for="from-email">From</label> 
+               <input disabled id="from-email" class="form-control" type="text" value="">
+            </div>
+            <div class="form-group">
+               <label for="subject" class="required">Subject</label>
+               <input autofocus id="subject" class="form-control" type="text">
+            </div>
+            <div class="form-group">
+               <label for="message" class="required">Message</label>
+               <textarea rows="4" id="message" class="form-control"></textarea>
+            </div>
+         </div>
+         <div class="modal-footer">
+            <button id="sendEmailSubmit" class="btn btn-primary" type="button">Send</button>
+            <button class="btn btn-secondary" type="button" id="cancelModalBtn">Cancel</button>
+         </div>
+      </form>
+   </div>
+</div>
 
         </div>
     </div>
@@ -200,6 +260,7 @@
     <script src="upload_file.js"></script>
     <script src="rating_review.js"></script>
     <script src="login_logut.js"></script>
+    <script src="send_email.js"></script>
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
 
 </body>

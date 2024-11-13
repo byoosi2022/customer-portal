@@ -132,9 +132,6 @@ def login(usr, pwd):
 import frappe
 from frappe import _
 
-import frappe
-from frappe import _
-
 @frappe.whitelist(allow_guest=True)
 def sign_up(first_name, email, password):
     # Check if the email is already registered
@@ -151,7 +148,28 @@ def sign_up(first_name, email, password):
     user.enabled = 1  # Enable the user
 
     try:
-        user.insert(ignore_permissions=True)  # Ignore permissions for the insert
+        # Insert the new user, ignoring permissions
+        user.insert(ignore_permissions=True)
+        
+        # Set the full name for the customer creation
+        full_name = f"{first_name} {user.last_name or ''}".strip()
+        
+        # Check if a Customer linked to this user email already exists
+        if not frappe.db.exists("Customer", {"custom_link_user_email": email}):
+            # Create a new Customer document
+            new_customer = frappe.get_doc({
+                'doctype': 'Customer',
+                'customer_name': full_name,  # Set the full name as customer name
+                'customer_group': 'All Customer Groups',  # Specify a valid customer group
+                'territory': 'All Territories',  # Specify a valid territory
+                'custom_link_user_email': email  # Link the customer to the user email
+            })
+            
+            new_customer.insert(ignore_permissions=True)  # Insert the customer document
+
+        # Commit changes to the database
+        frappe.db.commit()
+        
     except frappe.PermissionError:
         frappe.throw(_("Insufficient permissions to create user."))
 

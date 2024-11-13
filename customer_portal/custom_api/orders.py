@@ -105,7 +105,6 @@ def get_customer_delivery_notes():
 
     return {'sales_invoice': sales_invoice}
 
-
 @frappe.whitelist()
 def get_customer_balance_from_gl():
     # Get the currently logged-in user
@@ -113,7 +112,6 @@ def get_customer_balance_from_gl():
 
     # Fetch customer record using the logged-in user's email
     customer = frappe.get_all('Customer', filters={'custom_link_user_email': customer_email}, fields=['name','customer_name'])
-    
     
     # Check if a customer was found for the email
     if not customer:
@@ -124,23 +122,22 @@ def get_customer_balance_from_gl():
     # Abbreviate customer_name (taking first letter of each word)
     customer_abbreviation = ''.join([word[0].upper() for word in customer_full_name.split()])
 
-    
-
-    # Fetch total credits and account currency for the customer
+    # Fetch total credits and account currency for the customer, excluding cancelled entries
     credit_result = frappe.db.sql("""
         SELECT SUM(credit), account_currency
         FROM `tabGL Entry`
         WHERE party_type = 'Customer'
         AND party = %s
         AND docstatus = 1
+        AND is_cancelled = 0
         GROUP BY account_currency
     """, (customer_name,))
     
     # Extract total credit and currency
     total_credit = credit_result[0][0] if credit_result else 0
-    account_currency = credit_result[0][1] if credit_result else "NGN"  # Default to "USD" if currency is not available
+    account_currency = credit_result[0][1] if credit_result else "NGN"  # Default to "NGN" if currency is not available
 
-    # Fetch total debits for the customer in the same currency
+    # Fetch total debits for the customer in the same currency, excluding cancelled entries
     total_debit = frappe.db.sql("""
         SELECT SUM(debit)
         FROM `tabGL Entry`
@@ -148,6 +145,7 @@ def get_customer_balance_from_gl():
         AND party = %s
         AND account_currency = %s
         AND docstatus = 1
+        AND is_cancelled = 0
     """, (customer_name, account_currency))[0][0] or 0
 
     # Calculate available credits and balance payable
@@ -156,7 +154,7 @@ def get_customer_balance_from_gl():
 
     # Return the summary as a dictionary
     return {
-        "Email":customer_email,
+        "Email": customer_email,
         "Customer": customer_full_name,
         "Account Currency": account_currency,
         "Available Credits": available_credits,
@@ -276,6 +274,7 @@ def upload_document():
         "file_name": filedata.filename,
         "file_url": None,
         'custom_user_id':user,
+        'folder':'Home/Documents Shared with Customer Portal',
         "is_private": 0,  # 0 for public, 1 for private
         "content": filedata.read()
     })

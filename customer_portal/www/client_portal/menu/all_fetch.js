@@ -15,17 +15,21 @@ async function fetchCustomerBalance() {
         // Extract relevant data
         const { Customer, 'Account Currency': currency, 'Abr': customer_abbreviation, 'Available Credits': credits, 'Email': email, 'Balance Payable': balance } = data.message;
 
-        // Update HTML elements with fetched data customer-detail
-        document.getElementById('title-name').textContent = "Hello " + Customer;
+        // Update HTML elements with fetched data customer-detail rom-email
+        document.getElementById('title-name').innerHTML = "Hello " + Customer + "<p><span style='font-size: small;'>Welcome to MACL's Customer Portal</span></P>";
         document.getElementById('abbr').textContent = customer_abbreviation;
         document.getElementById('customer-name').textContent = Customer;
         document.getElementById('customer-detail').textContent = Customer;
         document.getElementById('email').textContent = email;
-        document.getElementById('email-detail').textContent = email;
+        document.getElementById('from-email').textContent = email;
+        document.getElementById('from-email').value = email;
         document.getElementById('currency').textContent = currency;
         document.getElementById('available-credits').textContent = formatCurrency(credits);
         document.getElementById('balance-payable').textContent = formatCurrency(balance);
-        
+
+        // Call the function to set the email on page load
+        setEmailToInput();
+
     } catch (error) {
         console.error('Failed to fetch customer balance:', error);
         // Optionally, you could set error messages in the HTML elements here.
@@ -36,7 +40,7 @@ async function fetchCustomerBalance() {
 async function fetchLastPayment() {
     try {
         const response = await fetch('/api/method/customer_portal.custom_api.orders.get_last_payment');
-        
+
         if (!response.ok) {
             throw new Error('Failed to fetch data');
         }
@@ -45,15 +49,16 @@ async function fetchLastPayment() {
 
         // Ensure the response contains the expected fields
         if (data.message) {
-            const { "Total Amount": totalAmount, 
-                    "Balance Payable": balancePayable, 
-                    "Paid On": paidOn, 
-                    "Payments": paymentsCount } = data.message;
+            const { "Total Amount": totalAmount,
+                "Balance Payable": balancePayable,
+                "Paid On": paidOn,
+                "Payments": paymentsCount } = data.message;
 
-            // Function to format currency
+            // Function to format currency in Naira
             function formatCurrency(amount) {
-                return `$${parseFloat(amount).toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}`;
+                return `₦${parseFloat(amount).toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}`;
             }
+
 
             // Format and display the data for Last Payment
             document.getElementById('total-amount').textContent = formatCurrency(totalAmount);
@@ -106,7 +111,7 @@ async function fetchSharedDocuments() {
 }
 
 // Call both functions to fetch and display the data when the page loads
-window.onload = function() {
+window.onload = function () {
     fetchCustomerBalance();
     fetchLastPayment();
     fetchSharedDocuments();

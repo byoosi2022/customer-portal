@@ -4,10 +4,9 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>My Invoices</title>
+    <title>Drawer Navigation Bar</title>
     <link rel="stylesheet" href="customers_orders.css">
-    <link rel="stylesheet" href="invoice.css">
-    <link rel="stylesheet" href="/assets/customer_portal/css/logo_company.css">
+    <link rel="stylesheet" href="statement.css">
 </head>
 
 <body>
@@ -33,7 +32,7 @@
                         <span>Change Password</span>
                     </button>
                     <div class="logout-section">
-                        <a href="/client_portal/access_portal/login" onclick="logoutUser()">
+                        <a href="/portal/metroplexenergies/logout.do">
                             <span>Log Out</span>
                         </a>
                     </div>
@@ -51,43 +50,94 @@
             <li><a href="/client_portal/quotes/quotes">Quotes</a></li>
             <li><a href="/client_portal/payment_entry/payment_entry">Payment Made</a></li>
             <li><a href="/client_portal/statement/statement">Statement</a></li>
-        </ul>
+         </ul>
     </div>
-
-    <!-- Main Content Area -->
-    <div class="content" id="content">
-        <!-- Company Header with Logo -->
-        <div class="company-header">
-            <img src="/assets/customer_portal/images/MACL.jpg" alt="Company Logo" class="company-logo" id="logo">
-            <div class="company-info">
-                <center>
-                    <h2>METRO AND CASTLE LIMITED</h2>
-                    <p>METRO MALL, ATLANTIC LAYOUT ESTATES,</p>
-                    <p>LEKKI GARDEN PHASE 4 ROAD, GENERAL PAINT B/STOP,</p>
-                    <p>LEKKI EXPRESSWAY, LAGOS.</p>
-                    <p>PHONE: 09154793665, 08097814209</p>
-                    <p>Info@metroandcastle.com www.metroandcastle.com</p>
-                </center>
-
-            </div>
+<!-- Main Content Area -->
+<div class="content" id="content">
+    <!-- Company Header with Logo -->
+    <div class="company-header">
+        <img src="/assets/customer_portal/images/MACL.jpg" alt="Company Logo" class="company-logo" id="logo">
+        <div class="company-info">
+            <center><h2>METRO AND CASTLE LIMITED</h2>
+            <p>METRO MALL, ATLANTIC LAYOUT ESTATES,</p>
+            <p>LEKKI GARDEN PHASE 4 ROAD, GENERAL PAINT B/STOP,</p>
+            <p>LEKKI EXPRESSWAY, LAGOS.</p>
+            <p>PHONE: 09154793665, 08097814209</p>
+            <p>Info@metroandcastle.com www.metroandcastle.com</p></center>
+     
         </div>
-        <h1>Welcome to My Invoices</h1>
-        <table class="cart-table">
-            <thead>
-                <tr>
-                    <th>Item</th>
-                    <th>ID</th>
-                    <th>Date</th>
-                    <th>Status</th>
-                    <th>Amount</th>
-                </tr>
-            </thead>
-            <tbody id="invoice-items">
-                <!-- Orders will be dynamically loaded here -->
-            </tbody>
-        </table>
-
     </div>
+
+    <h1>Customer Statement</h1>
+    <p>Here you can view your customer statement based on the selected date range.</p>
+
+    <!-- Date Range Filters -->
+    <div>
+        <label for="from_date">From Date:</label>
+        <input type="date" id="from_date">
+        <label for="to_date">To Date:</label>
+        <input type="date" id="to_date">
+        <button onclick="fetchStatementData()" class="get-btn">Get Statement</button>
+        <!-- Print Button -->
+        <button onclick="downloadStatement()" class="download-btn">Download Statement</button>
+    </div>
+
+    <!-- Statement Summary -->
+    <div>
+        <p><strong>Customer:</strong> <span id="customer_name"></span></p>
+        <p><strong>Balance Brought Forward:</strong> <span id="balance_brought_forward"></span></p>
+        <p><strong>Grand Total Amount:</strong> <span id="grand_total_amount"></span></p>
+        <p><strong>Total Paid Amount:</strong> <span id="total_paid_amount"></span></p>
+        <p><strong>Outstanding Amount:</strong> <span id="outstanding_amount"></span></p>
+    </div>
+
+    <!-- Combined Table for Sales Invoices, Payments, and GL Entries -->
+    <table border="1">
+        <thead>
+            <tr>
+                <th>Type</th> <!-- Invoice, Payment, GL Entry -->
+                <th>Posting Date</th>
+                <th>Amount</th>
+                <th>Payment Amount</th> <!-- New column for Payment Amount -->
+                <th>Running Balance</th>
+                <th>Details</th>
+            </tr>
+        </thead>
+        <tbody id="statement_data">
+            <!-- Data rows will be populated here -->
+        </tbody>
+    </table>
+</div>
+
+<style>
+    /* Style for the company header */
+    .company-header {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        margin-bottom: 20px;
+    }
+
+    .company-logo {
+        height: 90px; /* Adjust size of logo */
+        width: auto;
+    }
+
+    .company-info {
+        text-align: right;
+    }
+
+    .company-info h2 {
+        margin: 0;
+        font-size: 24px;
+    }
+
+    .company-info p {
+        margin: 0;
+        font-size: 14px;
+    }
+
+</style>
 
 
     <!-- Footer Section -->
@@ -134,9 +184,10 @@
         </div>
     </div>
 
-
+<!-- Include jsPDF library -->
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
     <script src="customers_orders.js"></script>
-    <script src="invoice.js"></script>
+    <script src="statement.js"></script>
     <script src="../utils.js"></script>
 
 </body>

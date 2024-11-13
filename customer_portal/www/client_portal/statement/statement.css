@@ -1,0 +1,202 @@
+/* #content {
+    width: 90%;
+    max-width: 1200px;
+    margin: 40px auto;
+    padding: 20px;
+    background-color: white;
+    border-radius: 8px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+} */
+
+/* Header styling */
+h1 {
+    font-size: 2rem;
+    color: #4CAF50;
+    margin-bottom: 10px;
+}
+
+/* Date Range Filters Section */
+div > label {
+    font-weight: bold;
+    margin-right: 10px;
+}
+
+div > input[type="date"] {
+    padding: 8px;
+    margin-right: 20px;
+    font-size: 1rem;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+}
+
+div > button {
+    padding: 8px 15px;
+    font-size: 1rem;
+    background-color: #4CAF50;
+    color: white;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+}
+
+div > button:hover {
+    background-color: #45a049;
+}
+
+/* Statement Summary Styling */
+div p {
+    font-size: 1rem;
+    line-height: 1.6;
+    margin: 5px 0;
+}
+
+div p strong {
+    color: #333;
+    font-weight: bold;
+}
+
+/* Table Styling */
+table {
+    width: 100%;
+    border-collapse: collapse;
+    margin-top: 20px;
+    border-radius: 8px;
+    overflow: hidden;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+}
+
+/* Table Header */
+thead {
+    background-color: #4CAF50;
+    color: white;
+}
+
+th {
+    padding: 12px 15px;
+    text-align: left;
+    font-size: 1rem;
+    font-weight: bold;
+}
+
+/* Table Body */
+tbody tr:nth-child(even) {
+    background-color: #f9f9f9;
+}
+
+tbody tr:nth-child(odd) {
+    background-color: #ffffff;
+}
+
+tbody tr:hover {
+    background-color: #f1f1f1;
+    cursor: pointer;
+}
+
+td {
+    padding: 10px 15px;
+    font-size: 1rem;
+    text-align: left;
+    border-top: 1px solid #ddd;
+}
+
+/* Adding responsive design for smaller screens */
+@media screen and (max-width: 768px) {
+    #content {
+        padding: 15px;
+    }
+
+    table, th, td {
+        font-size: 0.9rem;
+    }
+
+    th, td {
+        padding: 8px 10px;
+    }
+}
+
+/* printitnt */
+
+/* General Print Styles */
+/* General Print Styles */
+@media print {
+    body {
+        font-family: 'Arial', sans-serif;
+        line-height: 1.5;
+        margin: 0;
+        padding: 0;
+        color: #333;
+    }
+    
+    .content {
+        width: 100%;
+        margin: 20px;
+    }
+
+    .statement-title {
+        text-align: center;
+        font-size: 24px;
+        margin-bottom: 20px;
+        font-weight: bold;
+    }
+
+    .description {
+        text-align: center;
+        font-size: 16px;
+        margin-bottom: 20px;
+    }
+
+    .filters, .summary {
+        margin-bottom: 20px;
+    }
+
+    /* Hide the print button in the print version */
+    .print-btn {
+        display: none;
+    }
+
+    .get-btn {
+        display: none;
+    }
+
+    /* Table Styling */
+    table {
+        width: 100%;
+        border-collapse: collapse;
+        margin-top: 20px;
+    }
+
+    th, td {
+        padding: 12px;
+        text-align: left;
+        border: 1px solid #ddd;
+    }
+
+    th {
+        background-color: #f2f2f2;
+        font-weight: bold;
+    }
+
+    tr:nth-child(even) {
+        background-color: #f9f9f9;
+    }
+
+    tr:hover {
+        background-color: #f1f1f1;
+    }
+
+    /* Header Styling */
+    th {
+        background-color: #f7f7f7;
+        color: #333;
+    }
+
+    /* Footer and Bottom Section */
+    .summary p {
+        font-size: 16px;
+    }
+
+    /* Include From and To Date in the print version */
+    .filters {
+        display: none;  /* Hide filters on print */
+    }
+}

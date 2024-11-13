@@ -1,0 +1,123 @@
+
+
+h1 {
+    text-align: center;
+    color: #333;
+}
+
+.cart-table {
+    width: 100%;
+    border-collapse: collapse;
+    margin-top: 20px;
+}
+
+.cart-table th,
+.cart-table td {
+    padding: 15px;
+    text-align: left;
+    border-bottom: 1px solid #ddd;
+}
+
+.cart-table th {
+    background-color: #3498db;
+    color: white;
+}
+
+.cart-item img {
+    width: 50px;
+    height: 50px;
+    margin-right: 10px;
+    vertical-align: middle;
+}
+
+.cart-item span {
+    vertical-align: middle;
+}
+
+.quantity-input {
+    width: 50px;
+    padding: 6px;
+    text-align: center;
+    border: 1px solid #ddd;
+    border-radius: 4px;
+}
+
+/* Summary styles */
+.cart-summary,
+.order-summary {
+    display: flex;
+    justify-content: space-between;
+    margin: 20px 0;
+    font-size: 18px;
+}
+
+.order-text,
+.summary-text {
+    font-weight: bold;
+    color: #555;
+}
+
+.order-value,
+.summary-value {
+    font-weight: bold;
+    color: #333;
+    font-size: 1.1em;
+}
+
+/* Payment Schedule Styles */
+#order-schedule-template {
+    margin-top: 20px;
+    border: 1px solid #007bff;
+    border-radius: 5px;
+    padding: 10px;
+    background-color: #e7f3ff;
+}
+
+#order-schedule-template h3 {
+    color: #007bff;
+}
+
+.payment-schedule {
+    width: 100%;
+    border-collapse: collapse;
+    margin-top: 10px;
+}
+
+.payment-schedule th,
+.payment-schedule td {
+    border: 1px solid #ddd;
+    padding: 8px;
+    text-align: left;
+}
+
+.payment-schedule th {
+    background-color: #3498db;
+    color: white;
+}
+
+/* Button styles */
+button {
+    background-color: #28a745;
+    color: white;
+    border: none;
+    border-radius: 5px;
+    padding: 10px 15px;
+    cursor: pointer;
+}
+
+button:hover {
+    background-color: #218838;
+}
+
+/* Responsive design for smaller screens */
+@media (max-width: 600px) {
+    .cart-container {
+        padding: 10px;
+    }
+
+    .cart-table th,
+    .cart-table td {
+        font-size: 14px;
+    }
+}
+

@@ -7,6 +7,7 @@
     <title>Drawer Navigation Bar</title>
     <link rel="stylesheet" href="customers_orders.css">
     <link rel="stylesheet" href="table_container.css">
+    <link rel="stylesheet" href="/assets/customer_portal/css/logo_company.css">
 </head>
 
 <body>
@@ -46,16 +47,28 @@
             <li><a href="/client_portal/my_orders/orders">My Orders</a></li>
             <li><a href="/client_portal/Sales_invoice/invoices">Sales Invoice</a></li>
             <li><a href="/client_portal/delivery_note/deliveries">Delivery Note</a></li>
-            <li><a href="/client_portal/my_cart/cart">My Cart</a></li>
-            <li><a href="/client_portal/client">Products</a></li>
-            <li><a href="client.html">Statement</a></li>
-            <li id="login-link" style="display: none;"><a href="/login#login">Login</a></li>
-            <li id="logout-link" style="display: none;"><a href="/login#login" onclick="logoutUser()">Logout</a></li>
+            <!-- <li><a href="/client_portal/my_cart/cart">My Cart</a></li> -->
+            <li><a href="/client_portal/quotes/quotes">Quotes</a></li>
+            <li><a href="/client_portal/payment_entry/payment_entry">Payment Made</a></li>
+            <li><a href="/client_portal/statement/statement">Statement</a></li>
         </ul>
     </div>
 
     <!-- Main Content Area -->
     <div class="content" id="content">
+                                    <!-- Company Header with Logo -->
+    <div class="company-header">
+        <img src="/assets/customer_portal/images/MACL.jpg" alt="Company Logo" class="company-logo" id="logo">
+        <div class="company-info">
+            <center><h2>METRO AND CASTLE LIMITED</h2>
+            <p>METRO MALL, ATLANTIC LAYOUT ESTATES,</p>
+            <p>LEKKI GARDEN PHASE 4 ROAD, GENERAL PAINT B/STOP,</p>
+            <p>LEKKI EXPRESSWAY, LAGOS.</p>
+            <p>PHONE: 09154793665, 08097814209</p>
+            <p>Info@metroandcastle.com www.metroandcastle.com</p></center>
+     
+        </div>
+    </div>
         <h1>Welcome to My Orders</h1>
         <table class="cart-table">
             <thead>
