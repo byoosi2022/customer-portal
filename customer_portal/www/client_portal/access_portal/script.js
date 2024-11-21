@@ -61,6 +61,15 @@ document.addEventListener("DOMContentLoaded", function () {
         console.log(email, password);
 
         try {
+
+            // Attempt to log out any existing session
+            await fetch('/api/method/logout', {
+                    method: "GET",
+                    credentials: "include"
+                });
+    
+                console.log("Logged out any existing session.");
+                
             // Send a login request to the Frappe ERPNext API
             const response = await fetch(`/api/method/customer_portal.custom_api.auth.login?usr=${encodeURIComponent(email)}&pwd=${encodeURIComponent(password)}`, {
                 method: "POST",

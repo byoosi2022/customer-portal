@@ -3,6 +3,12 @@
       document.getElementById('emailModal').style.display = 'block';
    });
 
+    // Show the modal on "Send Email" button click
+    document.getElementById('supportBtn').addEventListener('click', function() {
+        document.getElementById('emailModal').style.display = 'block';
+     });
+  
+
    // Close the modal when "Cancel" or "×" is clicked
    document.getElementById('cancelModalBtn').addEventListener('click', function() {
       document.getElementById('emailModal').style.display = 'none';

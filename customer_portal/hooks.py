@@ -126,13 +126,17 @@ website_route_rules = [
 # ---------------
 # Hook on document methods and events
 
+
 doc_events = {
-	"Sales Order": {
-		"on_update": "customer_portal.custom_api.sales_invoice.update_penalty_and_create_invoice",
-		# "on_cancel": "method",
-		# "on_trash": "method"
-	}
+    "Sales Order": {
+        "on_update": "customer_portal.custom_api.sales_invoice.update_penalty_and_create_invoice",
+    },
+    # "Sales Invoice": {
+    #     "on_change": "customer_portal.custom_api.sales_invoice.update_payment_schedule_on_invoice_submission",
+    # }
 }
+
+
 
 # Scheduled Tasks
 # ---------------
@@ -142,7 +146,7 @@ scheduler_events = {
     # "all": [
     #     "customer_portal.tasks.all"
     # ],
-    "hourly": [
+    "monthly": [
         "customer_portal.custom_api.sales_invoice.enqueue_penalty_update"
     ],
     # "hourly": [

@@ -4,9 +4,11 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Drawer Navigation Bar</title>
+    <title>Customer Portal</title>
     <link rel="stylesheet" href="customers_orders.css">
     <link rel="stylesheet" href="statement.css">
+    <link rel="stylesheet" href="./css/send_email.css">
+    
 </head>
 
 <body>
@@ -50,6 +52,7 @@
             <li><a href="/client_portal/quotes/quotes">Quotes</a></li>
             <li><a href="/client_portal/payment_entry/payment_entry">Payment Made</a></li>
             <li><a href="/client_portal/statement/statement">Statement</a></li>
+            <li><a href="https://erp.metrogroupng.com/custom_pages/tranctions/transaction_report">View Investment</a></li>
          </ul>
     </div>
 <!-- Main Content Area -->
@@ -58,12 +61,12 @@
     <div class="company-header">
         <img src="/assets/customer_portal/images/MACL.jpg" alt="Company Logo" class="company-logo" id="logo">
         <div class="company-info">
-            <center><h2>METRO AND CASTLE LIMITED</h2>
-            <p>METRO MALL, ATLANTIC LAYOUT ESTATES,</p>
+            <h2>METRO AND CASTLE LIMITED</h2>
+            <!-- <p>METRO MALL, ATLANTIC LAYOUT ESTATES,</p>
             <p>LEKKI GARDEN PHASE 4 ROAD, GENERAL PAINT B/STOP,</p>
             <p>LEKKI EXPRESSWAY, LAGOS.</p>
             <p>PHONE: 09154793665, 08097814209</p>
-            <p>Info@metroandcastle.com www.metroandcastle.com</p></center>
+            <p>Info@metroandcastle.com www.metroandcastle.com</p> -->
      
         </div>
     </div>
@@ -124,7 +127,7 @@
     }
 
     .company-info {
-        text-align: right;
+        text-align: left;
     }
 
     .company-info h2 {
@@ -149,21 +152,53 @@
             <p>www.metroandcastle.com</p>
         </div>
 
-        <!-- Column 2: Support Links -->
-        <div class="footer-column">
-            <h5>Support</h5>
-            <a href="mailto:support@metroplexenergies.com">Email Support</a>
-            <a href="sms:+2348001234567">SMS Support</a>
-            <button class="btn">Contact Support</button>
-        </div>
+      <!-- Column 2: Support Links -->
+<div class="footer-column">
+    <h5>Support</h5>
+    <a href="mailto:finance@metrogroupng.com">Email Support</a>
+    <a href="sms:+2348001234567">SMS Support</a>
+    <button class="btn" id="supportBtn">Contact Support</button>
+</div>
+
+<!-- Modal -->
+<div class="modal-dialog modal-md" id="emailModal" style="display: none;">
+   <div class="modal-content">
+      <div class="modal-header">
+         <h4 class="modal-title">Mail To</h4>
+         <button class="close" type="button" id="closeModalBtn">×</button>
+      </div>
+      <form id="sendEmailForm">
+         <div class="modal-body">
+            <div id="errorAlert" class="form-alert-error" style="display: none; color: red;">Error sending email</div>
+            <div class="form-group">
+               <label for="from-email">From</label> 
+               <input disabled id="from-email" class="form-control" type="text" value="">
+            </div>
+            <div class="form-group">
+               <label for="subject" class="required">Subject</label>
+               <input autofocus id="subject" class="form-control" type="text">
+            </div>
+            <div class="form-group">
+               <label for="message" class="required">Message</label>
+               <textarea rows="4" id="message" class="form-control"></textarea>
+            </div>
+         </div>
+         <div class="modal-footer">
+            <button id="sendEmailSubmit" class="btn btn-primary" type="button">Send</button>
+            <button class="btn btn-secondary" type="button" id="cancelModalBtn">Cancel</button>
+         </div>
+      </form>
+   </div>
+</div>
+
 
         <!-- Column 3: Quick Links -->
         <div class="footer-column">
             <h5>Quick Links</h5>
-            <a href="/about">About Us</a>
-            <a href="/faq">FAQ</a>
-            <a href="/terms">Terms & Conditions</a>
-            <a href="/privacy">Privacy Policy</a>
+            <a href="https://www.metroandcastle.com/about/">About Us</a>
+            <a href="https://www.metroandcastle.com/faqs/">FAQ</a>
+            <a href="http://www.metroandcastle.com">Terms & Conditions</a>
+            <a href="https://www.metroandcastle.com/privacy-policy/">Privacy Policy</a>
         </div>
 
         <!-- Column 4: Address 1 -->
@@ -188,7 +223,71 @@
 <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
     <script src="customers_orders.js"></script>
     <script src="statement.js"></script>
+    <script src="/assets/customer_portal/js/send_email.js"></script>
     <script src="../utils.js"></script>
+    <script>
+        // Show the modal on "Contact Support" button click
+document.getElementById('supportBtn').addEventListener('click', function() {
+    document.getElementById('emailModal').style.display = 'block';
+});
+
+// Close the modal when "Cancel" or "×" is clicked
+document.getElementById('cancelModalBtn').addEventListener('click', function() {
+    document.getElementById('emailModal').style.display = 'none';
+});
+document.getElementById('closeModalBtn').addEventListener('click', function() {
+    document.getElementById('emailModal').style.display = 'none';
+});
+
+// Handle the "Send" button click
+document.getElementById('sendEmailSubmit').addEventListener('click', function() {
+    const subject = document.getElementById('subject').value;
+    const message = document.getElementById('message').value;
+    const errorAlert = document.getElementById('errorAlert');
+
+    // Fetch CSRF token using fetch API
+    fetch('/api/method/customer_portal.custom_api.auth.regenerate_session', {
+        method: 'GET',
+        headers: {
+            'Content-Type': 'application/json',
+        }
+    })
+    .then(response => response.json())
+    .then(csrfData => {
+        const csrfToken = csrfData.message.csrf_token; // Extract CSRF token from the response
+
+        // Set the CSRF token as a cookie
+        document.cookie = `X-Frappe-CSRF-Token=${csrfToken}; path=/`;
+
+        // Send the email data using the CSRF token
+        return fetch('/api/method/customer_portal.custom_api.send_mail.create_send_mail', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+                'X-Frappe-CSRF-Token': csrfToken // Include CSRF token in request headers
+            },
+            body: JSON.stringify({
+                subject: subject,
+                content: message
+            })
+        });
+    })
+    .then(response => response.json())
+    .then(data => {
+        if (data && data.message) {
+            alert('Email sent successfully!');
+            document.getElementById('emailModal').style.display = 'none';  // Close the modal on success
+        } else {
+            errorAlert.style.display = 'block';  // Show error alert if response is missing message
+        }
+    })
+    .catch(error => {
+        console.error('Error sending email:', error);
+        errorAlert.style.display = 'block';  // Show error alert on failure
+    });
+});
+
+    </script>
 
 </body>
 

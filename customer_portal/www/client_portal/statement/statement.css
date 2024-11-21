@@ -32,7 +32,8 @@ div > input[type="date"] {
 div > button {
     padding: 8px 15px;
     font-size: 1rem;
-    background-color: #4CAF50;
+    background-color: #3498db;
+    /* background-color: #4CAF50; */
     color: white;
     border: none;
     border-radius: 4px;
@@ -40,7 +41,8 @@ div > button {
 }
 
 div > button:hover {
-    background-color: #45a049;
+    background-color: #3498db;
+    /* background-color: #45a049; */
 }
 
 /* Statement Summary Styling */
@@ -67,7 +69,8 @@ table {
 
 /* Table Header */
 thead {
-    background-color: #4CAF50;
+    /* background-color: #4CAF50; */
+    background-color: #3498db;
     color: white;
 }
 
