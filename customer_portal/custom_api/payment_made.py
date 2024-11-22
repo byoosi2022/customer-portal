@@ -21,6 +21,6 @@ def get_customer_payment_made():
     quotations = frappe.get_all('Payment Entry', 
                                 filters={'party_name': customer_name, 
                                          'status': ['!=', 'Cancelled']},  # Exclude cancelled quotations
-                                fields=['name', 'posting_date', 'paid_amount', 'status'])
+                                fields=['name', 'posting_date', 'paid_amount', 'status','custom_amount_paid_till_date','custom_balance'])
 
     return {'payments': quotations}

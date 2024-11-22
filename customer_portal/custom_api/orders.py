@@ -111,7 +111,7 @@ def get_customer_balance_from_gl():
     customer_email = frappe.session.user
 
     # Fetch customer record using the logged-in user's email
-    customer = frappe.get_all('Customer', filters={'custom_link_user_email': customer_email}, fields=['name','customer_name'])
+    customer = frappe.get_all('Customer', filters={'custom_link_user_email': customer_email}, fields=['name', 'customer_name'])
     
     # Check if a customer was found for the email
     if not customer:
@@ -122,31 +122,36 @@ def get_customer_balance_from_gl():
     # Abbreviate customer_name (taking first letter of each word)
     customer_abbreviation = ''.join([word[0].upper() for word in customer_full_name.split()])
 
+    # Define the account filter
+    account_filter = '11310 - Receivables - NAIRA - MACL'
+
     # Fetch total credits and account currency for the customer, excluding cancelled entries
     credit_result = frappe.db.sql("""
         SELECT SUM(credit), account_currency
         FROM `tabGL Entry`
         WHERE party_type = 'Customer'
         AND party = %s
+        AND account = %s
         AND docstatus = 1
         AND is_cancelled = 0
         GROUP BY account_currency
-    """, (customer_name,))
+    """, (customer_name, account_filter))
     
     # Extract total credit and currency
     total_credit = credit_result[0][0] if credit_result else 0
     account_currency = credit_result[0][1] if credit_result else "NGN"  # Default to "NGN" if currency is not available
 
-    # Fetch total debits for the customer in the same currency, excluding cancelled entries
+    # Fetch total debits for the customer in the same currency and account, excluding cancelled entries
     total_debit = frappe.db.sql("""
         SELECT SUM(debit)
         FROM `tabGL Entry`
         WHERE party_type = 'Customer'
         AND party = %s
         AND account_currency = %s
+        AND account = %s
         AND docstatus = 1
         AND is_cancelled = 0
-    """, (customer_name, account_currency))[0][0] or 0
+    """, (customer_name, account_currency, account_filter))[0][0] or 0
 
     # Calculate available credits and balance payable
     available_credits = total_credit

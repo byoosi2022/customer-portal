@@ -66,6 +66,8 @@ async function fetchOrders() {
                     <td>${payment.posting_date}</td>
                     <td>${payment.status}</td>
                     <td>₦${payment.paid_amount.toLocaleString()}</td>
+                    <td>₦${payment.custom_amount_paid_till_date.toLocaleString()}</td>
+                    <td>₦${payment.custom_balance.toLocaleString()}</td>
                 `;
                 orderItemsContainer.appendChild(paymentRow);
             });
